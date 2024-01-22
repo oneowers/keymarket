@@ -5,7 +5,9 @@ import {
   EyeIcon
 } from '@heroicons/react/24/outline'
 
-
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
 const convertStringToNumber = (inputString) => {
     // Убираем пробелы и "сум" из строки
     const cleanedString = inputString.replace(/\s+/g, '').replace('сум', '');
@@ -50,10 +52,10 @@ const ProductItem = ({ item }) => {
         <div>{item.postView}</div>
       </div>
       <div className={`aspect-h-1 aspect-w-1 h-80 overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 transition-opacity ease-in-out duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
-        <img src={item.postImage[0]} alt={item.postTitle} className="fade-in-4 duration-150 h-full w-full object-cover object-center" />
+        <div style={{ backgroundImage: `url("${item.postImage[0]}")` }} className="fade-in-4 duration-150 h-full w-full bg-cover bg-center" />
       </div>
       <div className={`aspect-h-1 aspect-w-1 h-80 overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 absolute top-0 left-0 transition-opacity ease-in-out duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-        <img src={item.postImage[1]} alt={item.postTitle} className="h-full w-full object-cover object-center" />
+        <img src={item.postImage[1]} className="h-full w-full object-cover object-center" />
       </div>
       <h3 className="text-center mt-4 text-sm text-gray-700">{item.postTitle}</h3>
       <p className="text-center mt-2 text-sm font-sm text-gray-800 line-through">{((item.postPrice.total) / 100) * (100 + 10)}{item.postPrice.usd ? " USD": "UZS"}</p>

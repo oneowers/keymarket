@@ -26,7 +26,7 @@ const App = ({ api }) => {
           </Link>
         </div>
       </section>
-      <ProductGrid productsCount={20} api={"iphone"} />
+      <ProductGrid productsCount={40} api={"iphone"} />
 
       <Description />
       <FAQSection />
