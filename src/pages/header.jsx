@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom';
 
@@ -37,6 +37,27 @@ function classNames(...classes) {
 
 export default function Example() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://api.admin.rizomulk.uz/api/v1/admin/subcatalog/all-category-list", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+  
+        const jsonData = await response.json();
+        setData(jsonData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
 
   return (
     <header className="bg-indigo-900">
@@ -57,64 +78,71 @@ export default function Example() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <Popover.Group className="hidden lg:flex lg:gap-x-9">
-          <Popover className="relative">
-            <Popover.Button className="focus:outline-none focus:bg-black/20 px-2 py-1 rounded-lg flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
-                Категории 
-              <ChevronDownIcon className="h-5 w-5 flex-none text-white" aria-hidden="true" />
-            </Popover.Button>
 
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel className="absolute -left-8 top-full z-20 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
-                <div className="p-4">
-                  {products.map((item) => (
-                    <div
-                      key={item.name}
-                      className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
-                    >
-                      <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <item.icon className="h-6 w-6 text-gray-900 group-hover:text-gray-800" aria-hidden="true" />
+        <Popover.Group className="hidden lg:flex lg:gap-x-3">
+        {data && data.data.map((item) => (
+          <Popover className="relative">
+
+            <>
+              <Popover.Button className="focus:outline-none focus:bg-black/20 px-2 py-1 rounded-md flex items-center gap-x-1 text-sm font-middle leading-6 text-white">
+                  {item.name} 
+                <ChevronDownIcon className="h-5 w-5 flex-none text-white" aria-hidden="true" />
+              </Popover.Button>
+
+
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-200"
+                enterFrom="opacity-0 translate-y-1"
+                enterTo="opacity-100 translate-y-0"
+                leave="transition ease-in duration-150"
+                leaveFrom="opacity-100 translate-y-0"
+                leaveTo="opacity-0 translate-y-1"
+              >
+                <Popover.Panel className="absolute -left-8 top-full z-20 mt-3 w-screen max-w-sm overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                  <div className="">
+                    {item.sub_catalog_list.map((child_item) => (
+                      <div
+                        key={child_item.name}
+                        className="group relative flex items-center gap-x-6 rounded-lg p-2 text-sm leading-6 hover:bg-gray-50"
+                      >
+                        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                          <HomeIcon className="h-6 w-6 text-gray-900 group-hover:text-gray-800" aria-hidden="true" />
+                        </div>
+                        <div className="flex-auto">
+                          <Link to={"/category/" + child_item.id} className="block font-semibold text-gray-900">
+                            {child_item.name}
+                            <span className="absolute inset-0" />
+                          </Link>
+                          {/* <p className="mt-1 text-gray-800">{ichild_itemtem.description}</p> */}
+                        </div>
                       </div>
-                      <div className="flex-auto">
-                        <Link to={item.href} className="block font-semibold text-gray-900">
-                          {item.name}
-                          <span className="absolute inset-0" />
-                        </Link>
-                        <p className="mt-1 text-gray-800">{item.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                  {callsToAction.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-white hover:bg-gray-100"
-                    >
-                      <item.icon className="h-5 w-5 flex-none text-white" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              </Popover.Panel>
-            </Transition>
+                    ))}
+                  </div>
+                  {/* <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+                    {callsToAction.map((item) => (
+                      <Link
+                        key={child_item.name}
+                        to={child_item.id}
+                        className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-white hover:bg-gray-100"
+                      >
+                        <item.icon className="h-5 w-5 flex-none text-white" aria-hidden="true" />
+                        {child_item.name}
+                      </Link>
+                    ))}
+                  </div> */}
+                </Popover.Panel>
+              </Transition>
+            </>
+
+
+
+
+
+
           </Popover>
-          <Link to={"/apartments/"} className="text-sm font-semibold leading-6 px-2 py-1 text-white">
-            Продажа
-          </Link>
-          <Link to={"/houses/"} className="text-sm font-semibold leading-6 px-2 py-1 text-white">
-            Купить
-          </Link>
-          <Link to={"/rentals/"} className="text-sm font-semibold leading-6 px-2 py-1 text-white">
+          ))}
+          <Link to={"/rentals/"} className="text-sm font-middle leading-6 px-2 py-1 text-white">
             Другие
           </Link>
         </Popover.Group>
@@ -173,21 +201,8 @@ export default function Example() {
                     </>
                   )}
                 </Disclosure>
-                <Link to={"/apple/"}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
-                >
-                  Apple
-                </Link>
-                <Link to={"/samsung/"}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
-                >
-                  Samsung
-                </Link>
-                <Link to={"/other/"}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
-                >
-                  Другие
-                </Link>
+
+                
               </div>
               <div className="py-6">
                 <Link to={"/"}
