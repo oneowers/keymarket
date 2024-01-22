@@ -31,6 +31,7 @@ const ProductItem = ({ item }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  console.log(item)
 
   return (
     <>
@@ -42,14 +43,14 @@ const ProductItem = ({ item }) => {
     >
       <div className="absolute top-2 left-2 z-10 rounded-md text-white font-semibold bg-gray-900/50 px-2 py-1">-7%</div>
       <div className={`aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 transition-opacity ease-in-out duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
-        <img src={item.image} alt={item.title} className="fade-in-4 duration-150 h-full w-full object-cover object-center" />
+        <img src={item.postImage[0]} alt={item.postTitle} className="fade-in-4 duration-150 h-80 w-full object-cover object-center" />
       </div>
       <div className={`aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 absolute top-0 left-0 transition-opacity ease-in-out duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-        <img src={item.image1} alt={item.title} className="h-full w-full object-cover object-center" />
+        <img src={item.postImage[1]} alt={item.postTitle} className="h-80 w-full object-cover object-center" />
       </div>
-      <h3 className="text-center mt-4 text-sm text-gray-700">{item.title}</h3>
-      <p className="text-center mt-2 text-sm font-sm text-gray-800 line-through">{item.price}</p>
-      <p className="text-center text-lg font-medium text-gray-900">{convertNumberToString((convertStringToNumber(item.price) / 100) * (100 - 7))}</p>
+      <h3 className="text-center mt-4 text-sm text-gray-700">{item.postTitle}</h3>
+      <p className="text-center mt-2 text-sm font-sm text-gray-800 line-through">{((item.postPrice.total) / 100) * (100 + 10)}{item.postPrice.usd ? " USD": "UZS"}</p>
+      <p className="text-center text-lg font-medium text-gray-900">{item.postPrice.total}{item.postPrice.usd ? " USD": "UZS"}</p>
     </button>
     {isModalOpen && (
       <ProductModal

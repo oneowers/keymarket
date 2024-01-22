@@ -10,19 +10,20 @@ import {
   ComputerDesktopIcon,
   DeviceTabletIcon,
   MusicalNoteIcon,
-  ClockIcon
+  ClockIcon, HomeIcon, GlobeAmericasIcon, BuildingOffice2Icon, KeyIcon, HomeModernIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import Logo from './himarket.png'
 
 const products = [
-    { name: 'Ноутбуки', description: 'Мощные ноутбуки для работы и отдыха', href: '/laptops/', icon: ComputerDesktopIcon },
-    { name: 'Моноблоки', description: 'Стильные моноблоки для удобства использования', href: '/desktop/', icon: CubeIcon },
-    { name: 'Смартфоны', description: 'Инновационные смартфоны с высокой производительностью', href: '/mobile/', icon: DevicePhoneMobileIcon },
-    { name: 'Планшеты', description: 'Портативные планшеты для подключения к приложениям', href: '/tablets/', icon: DeviceTabletIcon },
-    { name: 'Наушники', description: 'Высококачественные наушники для музыки и комфортного использования', href: '/headphones/', icon: MusicalNoteIcon },
-    { name: 'Умные часы', description: 'Интеллектуальные часы с уникальными функциональными возможностями', href: '/watches', icon: ClockIcon },
-  ];
+  { name: 'Квартиры', description: 'Просторные квартиры для вашего комфорта и уюта', href: '/apartments/', icon: HomeModernIcon },
+  { name: 'Дома и Коттеджи', description: 'Уютные дома и коттеджи с собственными участками', href: '/houses/', icon: HomeIcon },
+  { name: 'Земельные Участки', description: 'Идеальные участки для строительства вашего дома', href: '/land/', icon: GlobeAmericasIcon },
+  { name: 'Коммерческая Недвижимость', description: 'Помещения для вашего бизнеса и инвестиций', href: '/commercial/', icon: BuildingOffice2Icon },
+  { name: 'Аренда', description: 'Варианты аренды для временного проживания и бизнеса', href: '/rentals/', icon: KeyIcon },
+  // Добавьте еще категорий по необходимости
+];
+
   
   
 const callsToAction = [
@@ -38,8 +39,7 @@ export default function Example() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="bg-white">
-    <p class="flex h-12 text-center items-center justify-center bg-gray-900 px-10 text-sm  lg:text-md font-medium text-white sm:px-15 lg:px-18">Nasiya 0% •  Купите телефон в рассрочку на 6 месяцев с 0% </p>
+    <header className="bg-indigo-900">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link to={"/"} className="-m-1.5 p-1.5">
@@ -50,7 +50,7 @@ export default function Example() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>
@@ -59,9 +59,9 @@ export default function Example() {
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-9">
           <Popover className="relative">
-            <Popover.Button className="focus:outline-none focus:bg-gray-100 px-2 py-1 rounded-lg flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-600">
+            <Popover.Button className="focus:outline-none focus:bg-black/20 px-2 py-1 rounded-lg flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
                 Категории 
-              <ChevronDownIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+              <ChevronDownIcon className="h-5 w-5 flex-none text-white" aria-hidden="true" />
             </Popover.Button>
 
             <Transition
@@ -81,14 +81,14 @@ export default function Example() {
                       className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
                     >
                       <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <item.icon className="h-6 w-6 text-gray-600 group-hover:text-gray-900" aria-hidden="true" />
+                        <item.icon className="h-6 w-6 text-gray-900 group-hover:text-gray-800" aria-hidden="true" />
                       </div>
                       <div className="flex-auto">
                         <Link to={item.href} className="block font-semibold text-gray-900">
                           {item.name}
                           <span className="absolute inset-0" />
                         </Link>
-                        <p className="mt-1 text-gray-600">{item.description}</p>
+                        <p className="mt-1 text-gray-800">{item.description}</p>
                       </div>
                     </div>
                   ))}
@@ -98,9 +98,9 @@ export default function Example() {
                     <Link
                       key={item.name}
                       to={item.href}
-                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
+                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-white hover:bg-gray-100"
                     >
-                      <item.icon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                      <item.icon className="h-5 w-5 flex-none text-white" aria-hidden="true" />
                       {item.name}
                     </Link>
                   ))}
@@ -108,19 +108,18 @@ export default function Example() {
               </Popover.Panel>
             </Transition>
           </Popover>
-
-          <Link to={"/apple/"} className="text-sm font-semibold leading-6 px-2 py-1 text-gray-600">
-            Apple
+          <Link to={"/apartments/"} className="text-sm font-semibold leading-6 px-2 py-1 text-white">
+            Продажа
           </Link>
-          <Link to={"/samsung/"} className="text-sm font-semibold leading-6 px-2 py-1 text-gray-600">
-            Samsung
+          <Link to={"/houses/"} className="text-sm font-semibold leading-6 px-2 py-1 text-white">
+            Купить
           </Link>
-          <Link to={"/other/"} className="text-sm font-semibold leading-6 px-2 py-1 text-gray-600">
+          <Link to={"/rentals/"} className="text-sm font-semibold leading-6 px-2 py-1 text-white">
             Другие
           </Link>
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link to={"/signin/"} className="text-lg px-3 py-2 rounded-lg font-semibold leading-6 text-gray-900">
+          <Link to={"/signin/"} className="text-lg px-3 py-2 rounded-lg font-semibold leading-6 text-white">
             Войти <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
@@ -139,7 +138,7 @@ export default function Example() {
             </Link>
             <button
               type="button"
-              className="-m-2.5 rounded-md p-2.5 text-gray-700"
+              className="-m-2.5 rounded-md p-2.5 text-white700"
               onClick={() => setMobileMenuOpen(false)}
             >
               <span className="sr-only">Close menu</span>
@@ -152,7 +151,7 @@ export default function Example() {
                 <Disclosure as="div" className="-mx-3">
                   {({ open }) => (
                     <>
-                      <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                      <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-whitehover:bg-gray-50">
                         Product
                         <ChevronDownIcon
                           className={classNames(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')}
@@ -165,7 +164,7 @@ export default function Example() {
                             key={item.name}
                             as="a"
                             href={item.href}
-                            className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-whitehover:bg-gray-50"
                           >
                             {item.name}
                           </Disclosure.Button>
@@ -175,24 +174,24 @@ export default function Example() {
                   )}
                 </Disclosure>
                 <Link to={"/apple/"}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
                 >
                   Apple
                 </Link>
                 <Link to={"/samsung/"}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
                 >
                   Samsung
                 </Link>
                 <Link to={"/other/"}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
                 >
                   Другие
                 </Link>
               </div>
               <div className="py-6">
                 <Link to={"/"}
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-whitehover:bg-gray-50"
                 >
                   Log in
                 </Link>

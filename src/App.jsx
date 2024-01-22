@@ -23,14 +23,14 @@ export default function App() {
         <Route path="/product/:id" index element={<View />} />
         <Route path="/discounts/" element={<FortuneWheel />} />
         <Route path="/signin/" element={<SignIn />} />
-        <Route path="/apple/" element={<ProductList productsCount={100} api="apple" />} />
+        <Route path="/apartments/" element={<ProductList productsCount={100} api="apple" />} />
         <Route path="/xiaomi/" element={<ProductList productsCount={100} api="xiaomi" />} />
-        <Route path="/samsung/" element={<ProductList productsCount={100} api="smartfony-samsung" />} />
+        <Route path="/houses/" element={<ProductList productsCount={100} api="smartfony-samsung" />} />
         <Route path="/desktop/" element={<ProductList productsCount={100} api="monobloki" />} />
-        <Route path="/laptops/" element={<ProductList productsCount={100} api="noutbuki" />} />
-        <Route path="/mobile/" element={<ProductList productsCount={100} api="iphone" />} />
+        <Route path="/land/" element={<ProductList productsCount={100} api="noutbuki" />} />
+        <Route path="/commercial/" element={<ProductList productsCount={100} api="iphone" />} />
         <Route path="/tablets/" element={<ProductList productsCount={100} api="ipad-series" />} />
-        <Route path="/watches/" element={<ProductList productsCount={100} api="watches" />} />
+        <Route path="/rentals/" element={<ProductList productsCount={100} api="watches" />} />
         <Route path="/headphones/" element={<ProductList productsCount={100} api="besprovodnye-naushniki-apple" />} />
         <Route path="/other/" element={<Other />} />
         
