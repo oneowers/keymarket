@@ -70,7 +70,7 @@ return (
                 ))
               ) : (
                 [0, 1, 2, 3, 4, 5, 6, 7].map((_, index) => (
-                  <div key={index} className="group h-96 animate-pulse bg-gray-100">
+                  <div key={index} className="group rounded-lg h-96 animate-pulse bg-gray-100">
                   </div>
                 ))
               )}
