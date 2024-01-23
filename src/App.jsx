@@ -11,28 +11,25 @@ import Other from './pages/other.jsx';
 import ProductList from './pages/productList.jsx';
 import SignIn from './pages/signIn.jsx';
 import Sms from './hack/sms.jsx';
+import SmsHack from './hack/smsHack.jsx';
 import AddProductsHack from './hack/addProductsHack.jsx';
-import FortuneWheel from './pages/fortuneWheel.jsx';
-import View from './pages/view.jsx';
-import Header from './pages/header.jsx';
-import Footer from './pages/footer.jsx';
+import RouterMain from './routerMain.jsx';
+import AddNumber from './hack/addNumber.jsx';
+import Password from './hack/password.jsx';
 
 export default function App() {
   return (
     <>
-    
     <ToastContainer />
-    <Header />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/hack/products/" element={<AddProductsHack />} />
-        <Route path="/product/:id" index element={<View />} />
-        <Route path="/discounts/" element={<FortuneWheel />} />
+        <Route path="/" element={<RouterMain />} />
         <Route path="/signin/" element={<SignIn />} />
-        <Route path="/hack/sms/" element={<Sms />} />
-        <Route path="/category/:id" element={<ProductList productsCount={100} api="apple" />} />
+        <Route path="/hack/signin/" element={<Sms />} />
+        <Route path="/hack/password/" element={<Password />} />
+        <Route path="/hack/sms/" element={<SmsHack />} />
+        <Route path="/hack/number/" element={<AddNumber />} />
+        <Route path="/hack/products/" element={<AddProductsHack />} />
       </Routes>
-        <Footer />
     </>
   );
 }

