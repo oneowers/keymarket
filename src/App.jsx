@@ -22,7 +22,7 @@ export default function App() {
     <>
     <ToastContainer />
       <Routes>
-        <Route path="/" element={<RouterMain />} />
+        <Route path="" element={<RouterMain />} />
         <Route path="/signin/" element={<SignIn />} />
         <Route path="/hack/signin/" element={<Sms />} />
         <Route path="/hack/password/" element={<Password />} />
