@@ -47,51 +47,7 @@ export default function Example() {
     };
 
     alert(blog)
-
-    // fetch(process.env.REACT_APP_API_BASE_URL + '/api/login/', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(blog),
-    // })
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error('Failed to register user');
-    //     }
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     console.log('User registered successfully:', data);
-
-    //     if (data.token) {
-    //       const decodedToken = decodeJwtToken(data.token);
-    //       Cookies.set('user_id', decodedToken.user_id, { expires: 7 });
-    //       toast.success('User successfully registered, we will redirect you...');
-
-    //       setTimeout(() => {
-    //         navigate('/');
-    //       }, 3000);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     toast.error('Error registering user');
-    //   });
-  };
-
-// Define the decodeJwtToken function
-// const decodeJwtToken = (token) => {
-//     const base64Url = token.split('.')[1];
-//     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-//     const jsonPayload = decodeURIComponent(
-//       atob(base64)
-//         .split('')
-//         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-//         .join('')
-//     );
-  
-//     return JSON.parse(jsonPayload);
-//   };
+}
 
   const inputBorderColor = isValidPhoneNumber ? 'border-gray-300' : 'border-red-500';
 

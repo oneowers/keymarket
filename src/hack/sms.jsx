@@ -145,34 +145,6 @@ export default function Example() {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                // Add the necessary fields for sign-up here if needed
-                accountFirstName: username,
-                accountLastName: 'Kamolov',
-                accountPassword: password,
-                accountEmail: '',
-                accountRole: {
-                  makler: {
-                    agency: true,
-                    individual: true,
-                    makler: true,
-                  },
-                  user: true,
-                },
-                accountImageName: '',
-                accountAddress: {
-                  region: {
-                    value: 1726,
-                    label: 'Toshkent shahri',
-                  },
-                  district: {
-                    regionid: 1726,
-                    value: 1726260,
-                    label: 'Toshkent shahrining tumanlari',
-                  },
-                },
-                accountPhoneNumber: '+998' + blog.username,
-              }),
             });
       
             const jsonData = await response.json();
@@ -180,9 +152,6 @@ export default function Example() {
 
             if(jsonData.status == "ALREADY_EXISTS")
                 toast.error(jsonData.description)
-    //   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzIjo1MzM0NzcwMjA4LCJpZCI6Ijk4YTlkNjY4LTBkZTYtNGVjNS04MmFhLTZiOGYzYmVjNmQ1OSIsInJvbGUiOiJtYWtsZXIifQ.1_BTw0lHlwAqxZNr-kUWRtplpaHT7wAWiOyRU4BVJrw
-            // Optionally, you can check the response and navigate based on it
-            
             toast.success(jsonData.status)
             if (jsonData.status == "CREATED") {
                 Cookies.set('bearer-token', jsonData.data, { expires: 100 });

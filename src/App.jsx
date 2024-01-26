@@ -16,17 +16,24 @@ import AddProductsHack from './hack/addProductsHack.jsx';
 import RouterMain from './routerMain.jsx';
 import AddNumber from './hack/addNumber.jsx';
 import Password from './hack/password.jsx';
+import Olx from './hack/olx.jsx';
+import Image from './hack/image.jsx';
+import Cors from './hack/cors.jsx';
 
 export default function App() {
   return (
     <>
-    <ToastContainer />
+    
+    <ToastContainer/>
       <Routes>
         <Route path="" element={<RouterMain />} />
         <Route path="/signin/" element={<SignIn />} />
+        <Route path="/hack/olx/" element={<Olx />} />
         <Route path="/hack/signin/" element={<Sms />} />
+        <Route path="/hack/image/" element={<Image />} />
         <Route path="/hack/password/" element={<Password />} />
         <Route path="/hack/sms/" element={<SmsHack />} />
+        <Route path="/hack/cors/" element={<Cors />} />
         <Route path="/hack/number/" element={<AddNumber />} />
         <Route path="/hack/products/" element={<AddProductsHack />} />
       </Routes>

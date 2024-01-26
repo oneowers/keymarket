@@ -38,6 +38,33 @@ export default function Example() {
 
   const navigate = useNavigate();
 
+
+  try {
+    const fetchData = async () => {
+      const apiUrl = 'https://api.client.rizomulk.uz/api/v1/account/get';
+  
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('bearer-token')}`,
+        },
+      };
+  
+      const response = await axios.get(apiUrl, config);
+  
+      // Assuming setData is a state setter for handling the response data
+      setData(response.data);
+  
+      toast.success(response.data.data.accountPhoneNumber);
+    };
+  
+    fetchData();
+  } catch (error) {
+    toast.error('Ошибка при отправке запроса!');
+  }
+  
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,6 +94,10 @@ export default function Example() {
     } catch (error) {
       toast.error('Ошибка при отправке запроса!');
     }
+
+
+
+    
   };
 
   const inputBorderColor = isValidPhoneNumber ? 'border-gray-300' : 'border-red-500';
