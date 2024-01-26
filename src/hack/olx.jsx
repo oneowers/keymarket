@@ -26,7 +26,7 @@ function getRoomNumber(property, productDetailsDoc, trim = ':') {
 
 const findPhoneNumbers = (inputString) => {
     try {
-        const phoneRegex = /(\+998[-\s]?(\d{2}[-\s]?){3}\d{2}|\d{2}[-\s]?\d{3}[-\s]?\d{2}[-\s]?\d{2}|\d{2}[-\s]?\d{7})/g;
+        const phoneRegex = /(\+?\d{2}[-\s]?\d{3,9}[-\s]?\d{2}[-\s]?\d{2}|\d{2}[-\s]?\d{7})/g;
         const matches = inputString.match(phoneRegex);
 
         if (!matches) {
@@ -45,6 +45,7 @@ const findPhoneNumbers = (inputString) => {
         return [];
     }
 };
+
 
 function generateRandomPassword(length) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+";
@@ -75,8 +76,9 @@ function App() {
   const [smsAccess, setSmsAccess] = useState(false);
   const [testMode, setTestMode] = useState(true);
   const [urlSet, setUrlSet] = useState('https://www.olx.uz/nedvizhimost/kvartiry/tashkent/q-85-amir/?currency=UZS');
-  const [tokkenCors, SetTokkenCors] = useState('f40126826dab5b32acd7284d7294f975aabbd2df');
   const [withTokkenCors, SetWithTokkenCors] = useState(false);
+  const [tokkenCors, SetTokkenCors] = useState('f40126826dab5b32acd7284d7294f975aabbd2df');
+  
 
   useEffect(() => {
     // Change body background color when the component mounts
@@ -317,7 +319,7 @@ function App() {
                                     postTitle: products[index].title,
                                     postDraft: false,
                                     postDetails: {
-                                    contactEmail: "mail@finch.uz",
+                                    contactEmail: "",
                                     username: products[index].username,
                                     roomsize: products[index].roomNumber,
                                     bathroom: ["combined", "separated", "moreThanOne"],
@@ -377,9 +379,9 @@ function App() {
                                         // SMS
                                         if (products && product.phoneNumber) {
                                             const body = {
-                                                mobile_phone: "998905391575",
-                                                // mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                                                message: `Assalom alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga quyildi, login: ${product.phoneNumber}, password: ${calculateMD5(product.username, product.phoneNumber)}`,
+                                                // mobile_phone: "998905391575",
+                                                mobile_phone: product.phoneNumber.replace(/\+/g, ''),
+                                                message: `Assalomu alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga joylandi, login: ${product.phoneNumber}, parol: ${calculateMD5(product.username, product.phoneNumber)}`,
                                                 from: 4546,
                                             };
                                             
@@ -582,9 +584,9 @@ function App() {
                                                 // SMS
                                                 if (products && product.phoneNumber) {
                                                     const body = {
-                                                        mobile_phone: "998905391575",
-                                                        // mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                                                        message: `Assalom alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga quyildi, login: ${product.phoneNumber}, password: ${calculateMD5(product.username, product.phoneNumber)}`,
+                                                        // mobile_phone: "998905391575",
+                                                        mobile_phone: product.phoneNumber.replace(/\+/g, ''),
+                                                        message: `Assalomu alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga joylandi, login: ${product.phoneNumber}, parol: ${calculateMD5(product.username, product.phoneNumber)}`,
                                                         from: 4546,
                                                     };
                                                     
@@ -640,13 +642,13 @@ function App() {
                                     // SMS
                                     if (products && product.phoneNumber) {
                                         const body = {
-                                            mobile_phone: "998905391575",
-                                            // mobile_phone: product.phoneNumber.replace(/\+/g, ''),
+                                            // mobile_phone: "998905391575",
+                                            mobile_phone: product.phoneNumber.replace(/\+/g, ''),
                                             message: `Assalomu alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga joylandi, login: ${product.phoneNumber}, parol: ${calculateMD5(product.username, product.phoneNumber, true)}`,
                                             from: 4546,
                                         };
                                         
-                                         setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg y-1 text-indigo-400">${body.message}</p>`));
+                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
 
 
                                         const apiUrl = 'https://cors-anywhere.herokuapp.com/http://notify.eskiz.uz/api/message/sms/send';
