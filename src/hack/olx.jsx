@@ -385,8 +385,8 @@ function App() {
                                                 from: 4546,
                                             };
                                             
-                                             setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg y-1 text-indigo-400">${body.message}</p>`));
-    
+                                            setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
+
     
                                             const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
                                             const config = {
@@ -590,8 +590,8 @@ function App() {
                                                         from: 4546,
                                                     };
                                                     
-                                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
-            
+                                                    setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
+
             
                                                         const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
                                                     const config = {
