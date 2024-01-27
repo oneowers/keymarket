@@ -374,9 +374,9 @@ function App() {
                                     repair: "requiredRepeir",
                                     dealType: "freeSale",
                                     additional: ["bargainingPossible"],
-                                    region_id: 1706,
-                                    district_id: 1706200,
-                                    addressKv: "dosijsadflaf saf s",
+                                    region_id: null,
+                                    district_id: null,
+                                    addressKv: "",
                                     maket: ["neighboring"],
                                     nearby: ["parkGreen"],
                                     facilities: ["telephone", "conditioner"],
@@ -395,8 +395,8 @@ function App() {
                                         lng: 64.4556146
                                     },
                                     ids: {
-                                        region_id: 1706,
-                                        district_id: 1706200
+                                        region_id: null,
+                                        district_id: null
                                     },
                                     text: {
                                         location: products[index].location,
@@ -582,8 +582,8 @@ function App() {
                                             repair: "requiredRepeir",
                                             dealType: "freeSale",
                                             additional: ["bargainingPossible"],
-                                            region_id: 1706,
-                                            district_id: 1706200,
+                                            region_id:  ,
+                                            district_id: null,
                                             addressKv: "dosijsadflaf saf s",
                                             maket: ["neighboring"],
                                             nearby: ["parkGreen"],
@@ -603,8 +603,8 @@ function App() {
                                                 lng: 64.4556146
                                             },
                                             ids: {
-                                                region_id: 1706,
-                                                district_id: 1706200
+                                                region_id: null,
+                                                district_id: null
                                             },
                                             text: {
                                                 location: products[index].location,
@@ -621,35 +621,6 @@ function App() {
                                             setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
                                             // setLoading((prevLoading) => prevLoading + loadCou);
 
-                                            if(smsAccess){
-                                            try {
-                                                // SMS
-                                                if (products && product.phoneNumber) {
-                                                    const body = {
-                                                        // mobile_phone: "998905391575",
-                                                        mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                                                        message: `Assalomu alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga joylandi, login: ${product.phoneNumber}, parol: ${calculateMD5(product.username, product.phoneNumber)}`,
-                                                        from: 4546,
-                                                    };
-                                                    
-                                                    setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
-
-            
-                                                        const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
-                                                    const config = {
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
-                                                        },
-                                                    };
-                                                    const response1 = await axios.post(apiUrl, body, config);
-                                                    console.log(response1)
-                                                    setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 rounded-lg y-1"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${body.mobile_phone}</span> Сообшения успешно отправленно!</p>`));                        
-                                                    // SMS
-                                                }
-                                            } catch (error) {
-                                                console.error('SMS ERRROR:', error);
-                                            }}
             
             
                                         } catch (error) {
