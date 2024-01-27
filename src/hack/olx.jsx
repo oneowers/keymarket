@@ -582,7 +582,7 @@ function App() {
                                             repair: "requiredRepeir",
                                             dealType: "freeSale",
                                             additional: ["bargainingPossible"],
-                                            region_id:  ,
+                                            region_id: null,
                                             district_id: null,
                                             addressKv: "dosijsadflaf saf s",
                                             maket: ["neighboring"],
