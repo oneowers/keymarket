@@ -83,7 +83,7 @@ function App() {
     const [mem, setMem] = useState([]);
     const [products, setProducts] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [dropdownOpen1, setDropdownOpen1] = useState(false);
+    const [smsInfo, setSmsInfo] = useState([]);
     const { index: index_Param } = useParams();
 
     function getQueryParameters() {
@@ -151,7 +151,7 @@ function App() {
             for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
                 setCirclesPages(index_pages)
                 
-              try {
+                try {
                 const response = await axios.get(mem1Child + (fetchAllPages ? `/?page=${index_pages}` : ''));
                 const htmlString = response.data;
                 const parser = new DOMParser();
@@ -275,18 +275,18 @@ function App() {
         setProdGet(true) 
     };
 
-  const fetchDataTwins = async (isActive, token_tw) => {
-        const response = await fetch(`https://api.client.rizomulk.uz/api/v1/post/user/list?limit=12&offset=0&postIsActive=${isActive}&postDraft=false&postRejected=false&postIsArchive=false&postSearchTop=null&postApplication=All&postCarousel=null&filterDate=+&filterPrice=+`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token_tw}`,
-                'Content-Type': 'application/json',
-            }
-        });
-        const data = await response.json();
-        return data.data;
-    
-};
+    const fetchDataTwins = async (isActive, token_tw) => {
+            const response = await fetch(`https://api.client.rizomulk.uz/api/v1/post/user/list?limit=12&offset=0&postIsActive=${isActive}&postDraft=false&postRejected=false&postIsArchive=false&postSearchTop=null&postApplication=All&postCarousel=null&filterDate=+&filterPrice=+`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token_tw}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            const data = await response.json();
+            return data.data;
+        
+    };
 
 
   
@@ -438,35 +438,8 @@ function App() {
                                 // setLoading((prevLoading) => prevLoading + loadCou);
 
                                 if(smsAccess){
-                                try {
-                                    // SMS
-                                    if (products && product.phoneNumber) {
-                                        const body = {
-                                            // mobile_phone: "998770707380",
-                                            mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                                            message: `Здравствуйте, ${product.username}! Теперь продать недвижимость стало проще.Ваш логин: ${product.phoneNumber}; Пароль: ${calculateMD5(product.username, product.phoneNumber)}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
-                                            from: 4546,
-                                        };
-                                        
-                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
-
-
-                                        const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
-                                        const config = {
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
-                                            },
-                                        };
-                                        const response1 = await axios.post(apiUrl, body, config);
-                                        console.log(response1)
-                                        setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1">${product.phoneNumber} Сообшения успешно отправленно!</p>`));                        
-                                        // SMS
-                                    }
-                                } catch (error) {
-                                    console.error('SMS ERRROR:', error);
+                                    setSmsInfo(prevSmsInfo => [...prevSmsInfo, [product.username, product.phoneNumber]]);
                                 }
-                            }
 
 
                             } catch (error) {
@@ -715,7 +688,37 @@ function App() {
     
   };
 
-
+  const sendSmsFinish = async () => {
+    try {
+      for (const sms of smsInfo) {
+        const body = {
+          mobile_phone: sms[1].replace(/\+/g, ''),
+          message: `Здравствуйте, ${sms[1]}! Теперь продать недвижимость стало проще. Ваш логин: ${sms[1]}; Пароль: ${calculateMD5(sms[0], sms[1])}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
+          from: 4546,
+        };
+  
+        setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
+  
+        const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
+          },
+        };
+  
+        const response = await axios.post(apiUrl, body, config);
+  
+        console.log(response);
+  
+        setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1">${sms[1]} Сообщение успешно отправлено!</p>`));
+      }
+    } catch (error) {
+      console.error('SMS ERROR:', error);
+      setConsole((prevConsole) => prevConsole + (`<p class="text-red-500 bg-red-900 rounded-lg y-1">Ошибка при отправке SMS: ${error.message}</p>`));
+    }
+  };
+  
 
 
     return (
@@ -748,12 +751,17 @@ function App() {
                     <br />
                 </p>
                 </div>
-                {prodGet ? (
+                {prodGet ? ((products.length == circlesProducts-1) ? (
                 <div onClick={sendSms} className='absolute right-4 top-4 py-1 px-3 rounded-lg 
                 hover:bg-green-500/90 bg-green-500 text-gray-900 flex'>
                     <PaperAirplaneIcon width={20} height={20} className='mr-1'/>
                     Push</div>
-                ): 
+                ): (
+                <div onClick={sendSmsFinish} className='absolute right-4 top-4 py-1 px-3 rounded-lg 
+                hover:bg-green-500/90 bg-green-500 text-gray-900 flex'>
+                    <PaperAirplaneIcon width={20} height={20} className='mr-1'/>
+                    Send Sms</div>
+                )):
                 mem1.length != 0 && (
                 <div onClick={fetchDataAndDisplayResults}
                 className='absolute right-4 top-4 py-1 px-3 rounded-lg 
