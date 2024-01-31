@@ -272,9 +272,9 @@ function App() {
         setConsole((prevConsole) => prevConsole + '<p class="text-green-400">Start parsing...</p><br/>');
         setLoading(0);
 
-        toast.success(`let i = ${(index_Param * 50) - 50}; i < ${(mem1.length > (parseInt(index_Param, 10))*50 ? parseInt(index_Param, 10)*50 : mem1.length)}`)
+        toast.success(`let i = ${(index_Param * 25) - 25}; i < ${(mem1.length > (parseInt(index_Param, 10))*25 ? parseInt(index_Param, 10)*25 : mem1.length)}`)
           
-        for (let i = (index_Param * 50) - 50; i < (mem1.length > (parseInt(index_Param, 10))*50 ? parseInt(index_Param, 10)*50 : mem1.length); i++) {
+        for (let i = (index_Param * 25) - 25; i < (mem1.length > (parseInt(index_Param, 10))*25 ? parseInt(index_Param, 10)*25 : mem1.length); i++) {
             const mem1Child = mem1[i];
             for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
               try {
@@ -384,7 +384,7 @@ function App() {
                     };
 
                     setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://www.olx.uz${link}`}">${title}</a><br/>`);
-                    setLoading((prevLoading) => prevLoading + ((33 / ((fetchAllPages ? 25 : 1) * mem1.length)) / listProducts.length));
+                    setLoading((prevLoading) => prevLoading + ((33 / ((fetchAllPages ? 25 : 1) * parseInt(index_Param, 10))) / listProducts.length));
                     setProducts((prevProducts) => [...prevProducts, product]);
 
                 }
