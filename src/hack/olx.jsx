@@ -289,6 +289,7 @@ function App() {
     };
 
 
+    let productsPushed = false;
   
   const sendSms = async () => {
       
@@ -683,7 +684,7 @@ function App() {
         setLoading((prevLoading) => prevLoading + loadCou);
     }
 
-
+    productsPushed = true;
 
     
   };
@@ -751,7 +752,7 @@ function App() {
                     <br />
                 </p>
                 </div>
-                {prodGet ? ((products.length == circlesProducts-1) ? (
+                {prodGet ? ((!productsPushed) ? (
                 <div onClick={sendSms} className='absolute right-4 top-4 py-1 px-3 rounded-lg 
                 hover:bg-green-500/90 bg-green-500 text-gray-900 flex'>
                     <PaperAirplaneIcon width={20} height={20} className='mr-1'/>
