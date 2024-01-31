@@ -28,7 +28,7 @@ export default function App() {
       <Routes>
         <Route path="" element={<RouterMain />} />
         <Route path="/signin/" element={<SignIn />} />
-        <Route path="/hack/olx/" element={<Olx />} />
+        <Route path="/hack/olx/:index" element={<Olx />} />
         <Route path="/hack/signin/" element={<Sms />} />
         <Route path="/hack/image/" element={<Image />} />
         <Route path="/hack/password/" element={<Password />} />

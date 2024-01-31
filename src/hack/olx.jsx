@@ -81,7 +81,7 @@ function App() {
     const [smsAccess, setSmsAccess] = useState(true);
     const [testMode, setTestMode] = useState(false);
     const [fetchAllPages, setFetchAllPages] = useState(true);
-    const { urlSet, setUrlSet } = useState('');
+    const [urlSet, setUrlSet] = useState('');
     const [withTokkenCors, setWithTokkenCors] = useState(true);
     const [tokkenCors, setTokkenCors] = useState('');
     const [mem, setMem] = useState([]);
@@ -91,6 +91,8 @@ function App() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownOpen1, setDropdownOpen1] = useState(false);
     const [categoryFetch, setCategoryFetch] = useState("kommercheskie-pomeshcheniya");
+    const { index: index_Param } = useParams();
+    
     
 
     
@@ -249,8 +251,6 @@ function App() {
     }
 
 
-    if(mem1 != []) console.log(mem1)
-
     useEffect(() => {
     // Change body background color when the component mounts
     document.body.style.backgroundColor = 'black';
@@ -271,11 +271,14 @@ function App() {
     const fetchDataAndDisplayResults = async () => {
         setConsole((prevConsole) => prevConsole + '<p class="text-green-400">Start parsing...</p><br/>');
         setLoading(0);
+
+        toast.success(`let i = ${(index_Param * 50) - 50}; i < ${(mem1.length > (parseInt(index_Param, 10))*50 ? parseInt(index_Param, 10)*50 : mem1.length)}`)
           
-        mem1.forEach(async (mem1Child) => {
+        for (let i = (index_Param * 50) - 50; i < (mem1.length > (parseInt(index_Param, 10))*50 ? parseInt(index_Param, 10)*50 : mem1.length); i++) {
+            const mem1Child = mem1[i];
             for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
               try {
-                const response = await axios.get(mem1Child.url + "&page=" + (fetchAllPages ? `${index_pages}` : ''));
+                const response = await axios.get("" + mem1Child.url + (fetchAllPages ? `&page=${index_pages}` : ''));
                 const htmlString = response.data;
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlString, 'text/html');
@@ -289,7 +292,6 @@ function App() {
                     const username = productDetailsDoc.querySelector('[data-testid=user-profile-link] div div h4').textContent;
 
                     const phoneNumbers = findPhoneNumbers(description);
-                    console.log(phoneNumbers)
                     if(phoneNumbers.length == 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-orange-200 bg-orange-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
                     else setConsole((prevConsole) => prevConsole + `<br/><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
                     const phoneNumber = phoneNumbers[0];
@@ -386,12 +388,12 @@ function App() {
                     setProducts((prevProducts) => [...prevProducts, product]);
 
                 }
-                console.log(products)
+                // console.log(products)
             } catch (error) {
                 // SetProducts([productData]);
                 }
             }
-        });
+        };
         setProdGet(true) 
     };
 
@@ -428,13 +430,15 @@ function App() {
                         {'Content-Type': 'application/json',},
                     );
 
-                    setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400" option="${response.data.data}" ><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumbers}</span> Пользователь зарегистрирован!</p>`));
+                    setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400" option="${response.data.data}" ><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span> Пользователь впервые зарегистрирован!</p>`));
 
+                    // console.log(response.data.data)
                     try {
                         if (response.statusText == "Created") {
                             try {
                                 const globalHeaders = new Headers();
-                                globalHeaders.append('Authorization', `Bearer ${Cookies.get('bearer-token')}`);
+                                globalHeaders.append('Authorization', `Bearer ${response.data.data}`);
+                                // toast.success(`Bearer ${Cookies.get('bearer-token')}`);
                                     for (let indexImage = 0; indexImage < product.images.length; indexImage++) {
                                         const product_image = product.images[indexImage];
                                         try {
@@ -463,10 +467,11 @@ function App() {
                                             }
                                         } catch (error) {
                                             console.error('Error during image processing', error);
+                                            toast.error('Error during image processing');
                                         }
                                 }
                                 } catch (error) {
-                                    console.error('An error occurred', error);
+                                    toast.error('An error occurred');
                                 }
     
                             try {
