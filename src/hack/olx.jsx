@@ -78,20 +78,37 @@ function App() {
     const [loading, setLoading] = useState(0);
     const [token, setToken] = useState('');
     const [prodGet, setProdGet] = useState(false);
-    const [smsAccess, setSmsAccess] = useState(true);
-    const [testMode, setTestMode] = useState(false);
-    const [fetchAllPages, setFetchAllPages] = useState(true);
     const [urlSet, setUrlSet] = useState('');
     const [withTokkenCors, setWithTokkenCors] = useState(true);
-    const [tokkenCors, setTokkenCors] = useState('');
     const [mem, setMem] = useState([]);
-    const [mem1, setMem1] = useState([]);
-    const [selectedOption, setSelectedOption] = useState('abb4e19f-575d-43c0-a53e-04e68ea8dcc2');
     const [products, setProducts] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownOpen1, setDropdownOpen1] = useState(false);
-    const [categoryFetch, setCategoryFetch] = useState("kommercheskie-pomeshcheniya");
     const { index: index_Param } = useParams();
+
+    function getQueryParameters() {
+        const queryString = window.location.search.substring(1);
+        const parameters = {};
+    
+        // Split the query string into key-value pairs
+        queryString.split('&').forEach((pair) => {
+        const [key, value] = pair.split('=');
+        parameters[key] = decodeURIComponent(value);
+        });
+    
+        return parameters;
+    }
+    
+    // Call the function to get query parameters
+    const queryParams = getQueryParameters();
+    
+    // Now you can access individual parameters like this:
+    const smsAccess = queryParams.smsAccess == "true";
+    const fetchAllPages = queryParams.fetchAllPages == "true";
+    const categoryFetch = queryParams.categoryFetch;
+    const testMode = queryParams.testMode == "true";
+    const selectedOption = queryParams.selectedOption;
+    const mem1 = queryParams.mem1?.split(',') || [];;
     
 
 
@@ -101,159 +118,6 @@ function App() {
     
 
     
-
-
-    useEffect(() => {
-        // Load the saved values from cookies when the component mounts
-        const savedWithTokkenCors = localStorage.getItem('withTokkenCors');
-        const savedTokkenCors = localStorage.getItem('tokkenCors');
-    
-        if (savedWithTokkenCors !== null) {
-          setWithTokkenCors(JSON.parse(savedWithTokkenCors));
-        }
-    
-        if (savedTokkenCors !== null) {
-          setTokkenCors(savedTokkenCors);
-        }
-      }, []);
-    
-      const handleCheckboxChange = (e) => {
-        const isChecked = e.target.checked;
-        setWithTokkenCors(isChecked);
-    
-        // Save the checkbox state in a cookie
-        localStorage.setItem('withTokkenCors', JSON.stringify(isChecked));
-      };
-    
-      const handleInputTextChange = (e) => {
-        const inputValue = e.target.value;
-        setTokkenCors(inputValue);
-    
-        // Save the input text in a cookie
-        localStorage.setItem('tokkenCors', inputValue);
-      }
-
-    useEffect(() => {
-    const fetchData = async () => {
-        try {
-        const response = await fetch("https://api.admin.rizomulk.uz/api/v1/admin/subcatalog/all-category-list", {
-            method: "GET",
-            headers: {
-            "Content-Type": "application/json",
-            },
-        });
-
-        const jsonData = await response.json();
-
-        const categories = jsonData.data.flatMap(ParentCategory =>
-            ParentCategory.sub_catalog_list.map(ChildCategory => ({
-            parent: ParentCategory.name,
-            name: ChildCategory.name,
-            id: ChildCategory.id, // Change 'url' to 'id' for consistency
-            }))
-        );
-        setMem(categories);
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        }
-    };
-
-
-
-    fetchData();
-    }, []); // Ensure that this useEffect runs only once on component mount
-
-
-
-    const GetCat = async () => {
-        const fetchData = async () => {
-        try {
-            const response = await fetch("https://corsproxy.io/?https://www.olx.uz/api/v1/offers/metadata/search/?offset=0&limit=40&category_id=1&filter_refiners=&facets=%5B%7B%22field%22%3A%22region%22%2C%22fetchLabel%22%3Atrue%2C%22fetchUrl%22%3Atrue%2C%22limit%22%3A30%7D%5D", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem('tokkenCors')}`
-            },
-            });
-    
-            const jsonData = await response.json();
-    
-            const categories1 = await Promise.all(jsonData.data.facets.region.map(async (parentCategory) => {
-            try {
-                const response1 = await fetch(`https://corsproxy.io/?https://www.olx.uz/api/v1/geo-encoder/regions/${parentCategory.id}/cities/?limit=300`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${localStorage.getItem('tokkenCors')}`
-                },
-                });
-    
-                const childData = await response1.json();
-    
-                const childCategories = await Promise.all(childData.data.map(async (getDistrict) => {
-                try {
-                    if (getDistrict.has_districts) {
-                    const response2 = await fetch(`https://corsproxy.io/?https://www.olx.uz/api/v1/geo-encoder/cities/${getDistrict.id}/districts/`, {
-                        method: "GET",
-                        headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${localStorage.getItem('tokkenCors')}`
-                        },
-                    });
-    
-                    const districts_data = await response2.json();
-    
-
-                    return districts_data.data.map(district_data => ({
-                        category_id: 1,
-                        region_data: parentCategory,
-                        city_data: getDistrict,
-                        district_data: district_data,
-                        url: `https://www.olx.uz/nedvizhimost/${categoryFetch}/${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}&currency=UZS`
-                    }));
-                    } else {
-                    setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">https://www.olx.uz/nedvizhimost/${categoryFetch}/${getDistrict.normalized_name}/?currency=UZS</p>`));
-
-                    return {
-                        category_id: 1,
-                        region_data: parentCategory,
-                        city_data: getDistrict,
-                        district_data: [],
-                        url: `https://www.olx.uz/nedvizhimost/${categoryFetch}/${getDistrict.normalized_name}/?currency=UZS`
-                    };
-                    }
-    
-                } catch (error) {
-                    setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">hhttps://www.olx.uz/nedvizhimost/${categoryFetch}/${getDistrict.normalized_name}/?currency=UZS</p>`));
-                    toast.error('getDistrict categories olx error');
-                    return {
-                        category_id: 1,
-                        region_data: parentCategory,
-                        city_data: getDistrict,
-                        district_data: [],
-                        url: `https://www.olx.uz/nedvizhimost/${categoryFetch}/${getDistrict.normalized_name}/?currency=UZS`
-                    };
-                }
-                }));
-    
-                return childCategories.flat(); // Flatten the array of arrays
-    
-            } catch (error) {
-                toast.error('Child categories olx error');
-                return null;
-            }
-            }));
-    
-            const flattenedCategories = categories1.flat(); // Flatten the array of arrays
-            setMem1(flattenedCategories);
-    
-        } catch (error) {
-            toast.error('Parent categories olx error');
-        }
-        };
-    
-        fetchData();
-    }
 
 
     useEffect(() => {
@@ -276,16 +140,19 @@ function App() {
     const fetchDataAndDisplayResults = async () => {
         setConsole((prevConsole) => prevConsole + '<p class="text-green-400">Start parsing...</p><br/>');
         setLoading(0);
-
-        toast.success(`let i = ${(index_Param * 25) - 25}; i < ${(mem1.length > (parseInt(index_Param, 10))*25 ? parseInt(index_Param, 10)*25 : mem1.length)}`)
-          
-        for (let i = (index_Param * 25) - 25; i < (mem1.length > (parseInt(index_Param, 10))*25 ? parseInt(index_Param, 10)*25 : mem1.length); i++) {
-            const mem1Child = mem1[i];
+        // let itsEnd = false
+        for (let i = 0; i < mem1.length; i++) {
+            // console.log(itsEnd)
+            // if(itsEnd) break
+            const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}`;
             setCirclesRegions(i)
+            setLoading((prevLoading) => prevLoading + (100 / mem1.length) );
+
             for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
                 setCirclesPages(index_pages)
+                
               try {
-                const response = await axios.get("" + mem1Child.url + (fetchAllPages ? `&page=${index_pages}` : ''));
+                const response = await axios.get(mem1Child + (fetchAllPages ? `/?page=${index_pages}` : ''));
                 const htmlString = response.data;
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlString, 'text/html');
@@ -299,8 +166,8 @@ function App() {
                     const username = productDetailsDoc.querySelector('[data-testid=user-profile-link] div div h4').textContent;
 
                     const phoneNumbers = findPhoneNumbers(description);
-                    if(phoneNumbers.length == 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-orange-200 bg-orange-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
-                    else setConsole((prevConsole) => prevConsole + `<br/><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
+                    // if(phoneNumbers.length == 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-orange-200 bg-orange-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
+                    if(phoneNumbers.length != 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
                     const phoneNumber = phoneNumbers[0];
 
 
@@ -350,7 +217,8 @@ function App() {
                 };
         // 
                 const listProducts =  doc.firstElementChild.querySelector('.css-oukcj3').querySelectorAll('.css-1sw7q4x')
-                
+                const countInPage = doc.firstElementChild.querySelector('[data-testid=total-count]').textContent.match(/\d+/);
+
                 for (const productElement of listProducts) {
 
                     const title = productElement.querySelector('h6').textContent;
@@ -359,6 +227,7 @@ function App() {
                     const locationDate = productElement.querySelector('[data-testid=location-date]').textContent;
 
                     // 
+                    
                     const location = locationDate.split(' - ')[0];
                     const imageURL = productElement.querySelector('img').getAttribute('src');
                     const isTop = productElement.querySelector('.css-1jh69qu') !== null;
@@ -375,6 +244,7 @@ function App() {
                         title,
                         price,
                         location,
+                        countInPage,
                         imageURL,
                         isTop,
                         link: `https://www.olx.uz${link}`,
@@ -390,11 +260,12 @@ function App() {
                         phoneNumber,
                     };
 
-                    setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://www.olx.uz${link}`}">${title}</a><br/>`);
-                    setLoading((prevLoading) => prevLoading + ((33 / ((fetchAllPages ? 25 : 1) * parseInt(index_Param, 10))) / listProducts.length));
-                    setProducts((prevProducts) => [...prevProducts, product]);
+                    if(phoneNumber != null) setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://www.olx.uz${link}`}">${title}</a><br/>`);
+                    if(phoneNumber != null) setProducts((prevProducts) => [...prevProducts, product]);
 
                 }
+
+                if(countInPage < ((i+1) * 52)){toast(`break`); break}
                 // console.log(products)
             } catch (error) {
                 // SetProducts([productData]);
@@ -426,187 +297,359 @@ function App() {
         setCirclesProducts(index)
         const product = products[index];
         if(product.phoneNumber){
+            try {
+                const response = await axios.post(
+                    'https://api.client.rizomulk.uz/api/v1/account/sign-up', 
+                    {
+                        accountFirstName: product.username,
+                        accountLastName: '',
+                        accountPhoneNumber: product.phoneNumber,
+                        accountPassword: calculateMD5(product.username, product.phoneNumber),
+                    }, 
+                    {'Content-Type': 'application/json',},
+                );
+
+                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400" option="${response.data.data}" ><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span> Пользователь впервые зарегистрирован!</p>`));
+
+                // console.log(response.data.data)
+                try {
+                    if (response.statusText == "Created") {
+                        try {
+                            const globalHeaders = new Headers();
+                            globalHeaders.append('Authorization', `Bearer ${response.data.data}`);
+                            // toast.success(`Bearer ${Cookies.get('bearer-token')}`);
+                                for (let indexImage = 0; indexImage < product.images.length; indexImage++) {
+                                    const product_image = product.images[indexImage];
+                                    try {
+                                        if(!testMode){
+                                            const response = await fetch(product_image);
+                                            const blob = await response.blob();
+                                            const formData = new FormData();
+                                            formData.append('files', blob, 'image.jpg');
+                                            const uploadResponse = await fetch('https://api.client.rizomulk.uz/api/v1/minio/upload/files', {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: globalHeaders,
+                                            });
+                        
+                                            const jsonData = await uploadResponse.json();
+                                            if (uploadResponse.status === 200) {
+                                                products[index].images[indexImage] = jsonData.data[0].Name; // Make sure this structure is correct
+                                                console.log(products[index].images[indexImage]);
+                                                setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${jsonData.data[0].Link}">${jsonData.data[0].Name}</a>`);
+                                                // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
+                                            } else {
+                                            console.error('Error uploading the image to the server');
+                                        }}else{
+                                            setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${product_image}">${product_image}</a>`);
+                                            // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
+                                        }
+                                    } catch (error) {
+                                        console.error('Error during image processing', error);
+                                        toast.error('Error during image processing');
+                                    }
+                            }
+                            } catch (error) {
+                                toast.error('An error occurred');
+                            }
+
+                        try {
+                            const apiUrl = 'https://api.client.rizomulk.uz/api/v1/post/create';
+                            const config = {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${response.data.data}`,
+                            },
+                            };
+                    
+                            const postData = {
+                                SubcatalogID: selectedOption,
+                                postArea: {
+                                general: products[index].apartmentSize,
+                                kitchen: "0",
+                                rasidential: "0"
+                                },
+                                postContact: {
+                                tel: products[index].phoneNumber
+                                },
+                                postDescription: products[index].description,
+                                postPrice: {
+                                application: {},
+                                total: parseInt(products[index].price.replace(/\D/g, '')), // Remove non-numeric characters
+                                usd: false,
+                                uzs: true
+                                },
+                                postTitle: products[index].title,
+                                postDraft: false,
+                                postDetails: {
+                                contactEmail: "",
+                                username: products[index].username,
+                                roomsize: products[index].roomNumber,
+                                bathroom: ["combined", "separated", "moreThanOne"],
+                                balcony: "balcony",
+                                window: ["yard", "outside"],
+                                housetype: "panel",
+                                floor1: products[index].floor1,
+                                floor2: products[index].floor2,
+                                status: "housingStock",
+                                repair: "requiredRepeir",
+                                dealType: "freeSale",
+                                additional: ["bargainingPossible"],
+                                region_id: null,
+                                district_id: null,
+                                addressKv: "",
+                                maket: ["neighboring"],
+                                nearby: ["parkGreen"],
+                                facilities: ["telephone", "conditioner"],
+                                typeContact: "owner",
+                                catalog: "apartments"
+                                },
+                                postExtraData: {
+                                floor: products[index].floor1,
+                                floor2: products[index].floor2,
+                                size: products[index].apartmentSize
+                                },
+                                postImage: products[index].images,
+                                postLocation: {
+                                coordinates: {
+                                    lat: 39.768193,
+                                    lng: 64.4556146
+                                },
+                                ids: {
+                                    region_id: null,
+                                    district_id: null
+                                },
+                                text: {
+                                    location: products[index].location,
+                                    home: products[index].location,
+                                    region: products[index].location,
+                                    district: products[index].location
+                                }
+                                },
+                                postApplication: false
+                            };
+                    
+                            console.log(postData)
+                    
+                            if(!testMode){
+                            try {
+                                await axios.post(apiUrl, postData, config);
+                                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
+                                // setLoading((prevLoading) => prevLoading + loadCou);
+
+                                if(smsAccess){
+                                try {
+                                    // SMS
+                                    if (products && product.phoneNumber) {
+                                        const body = {
+                                            // mobile_phone: "998770707380",
+                                            mobile_phone: product.phoneNumber.replace(/\+/g, ''),
+                                            message: `Здравствуйте, ${product.username}! Теперь продать недвижимость стало проще.Ваш логин: ${product.phoneNumber}; Пароль: ${calculateMD5(product.username, product.phoneNumber)}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
+                                            from: 4546,
+                                        };
+                                        
+                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
+
+
+                                        const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
+                                        const config = {
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
+                                            },
+                                        };
+                                        const response1 = await axios.post(apiUrl, body, config);
+                                        console.log(response1)
+                                        setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1">${product.phoneNumber} Сообшения успешно отправленно!</p>`));                        
+                                        // SMS
+                                    }
+                                } catch (error) {
+                                    console.error('SMS ERRROR:', error);
+                                }
+                            }
+
+
+                            } catch (error) {
+                                console.error('POST RESPONSE:', error);
+                            }}else{
+                                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
+                                // setLoading((prevLoading) => prevLoading + loadCou);
+                            }
+                            
+                        } catch (error) {
+                            console.error('Error posting data:', error);
+                        }
+
+                    }
+                } catch (error) {
+                    console.error('Ошибка при отправке запроса: '+ error)
+                    setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Проблема в создания поста</p>`));
+                }
+            } catch (error) {
                 try {
                     const response = await axios.post(
-                        'https://api.client.rizomulk.uz/api/v1/account/sign-up', 
+                        'https://api.client.rizomulk.uz/api/v1/account/sign-in', 
                         {
-                            accountFirstName: product.username,
-                            accountLastName: '',
-                            accountPhoneNumber: product.phoneNumber,
-                            accountPassword: calculateMD5(product.username, product.phoneNumber),
+                            phoneNumber: product.phoneNumber,
+                            password: calculateMD5(product.username, product.phoneNumber),
                         }, 
                         {'Content-Type': 'application/json',},
                     );
 
-                    setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400" option="${response.data.data}" ><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span> Пользователь впервые зарегистрирован!</p>`));
 
-                    // console.log(response.data.data)
+                    setConsole((prevConsole) => prevConsole + (`</br><p class="text-green-400"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Успешно зaшли в аккаунт пользователя!</p>`));
+                
                     try {
-                        if (response.statusText == "Created") {
-                            try {
+                        if (response.statusText == "OK") {
+                            // console.log(response.data.data)
+                            const draft_posts_data_data = await fetchDataTwins(false, response.data.data);
+                            const posted_posts_data_data = await fetchDataTwins(true, response.data.data);
+
+                            let twinsAccess = true;
+
+                            if(draft_posts_data_data != null)
+                                for (let index_d = 0; index_d < draft_posts_data_data.length; index_d++) {
+                                    if (product.title == draft_posts_data_data[index_d].postTitle) {
+                                        twinsAccess = false;
+                                        setConsole((prevConsole) => prevConsole + (`</br><p class="text-yellow-400"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Twins detected</p>`));
+                                        break;
+                                        
+                                    }
+                                }
+
+                            if(posted_posts_data_data != null)
+                                for (let index_p = 0; index_p < posted_posts_data_data.length; index_p++) {
+                                    if (product.postTitle == posted_posts_data_data[index_p].postTitle) {
+                                        twinsAccess = false;
+                                        setConsole((prevConsole) => prevConsole + (`</br><p class="text-yellow-400"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Twins detected</p>`));
+                    
+                                        break;
+                                    }
+                                }
+                            
+                            
+                            if(twinsAccess){
                                 const globalHeaders = new Headers();
                                 globalHeaders.append('Authorization', `Bearer ${response.data.data}`);
-                                // toast.success(`Bearer ${Cookies.get('bearer-token')}`);
-                                    for (let indexImage = 0; indexImage < product.images.length; indexImage++) {
-                                        const product_image = product.images[indexImage];
-                                        try {
-                                            if(!testMode){
-                                                const response = await fetch(product_image);
-                                                const blob = await response.blob();
-                                                const formData = new FormData();
-                                                formData.append('files', blob, 'image.jpg');
-                                                const uploadResponse = await fetch('https://api.client.rizomulk.uz/api/v1/minio/upload/files', {
-                                                    method: 'POST',
-                                                    body: formData,
-                                                    headers: globalHeaders,
-                                                });
-                            
-                                                const jsonData = await uploadResponse.json();
-                                                if (uploadResponse.status === 200) {
-                                                    products[index].images[indexImage] = jsonData.data[0].Name; // Make sure this structure is correct
-                                                    console.log(products[index].images[indexImage]);
-                                                    setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${jsonData.data[0].Link}">${jsonData.data[0].Name}</a>`);
-                                                    // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
-                                                } else {
-                                                console.error('Error uploading the image to the server');
-                                            }}else{
-                                                setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${product_image}">${product_image}</a>`);
-                                                // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
-                                            }
-                                        } catch (error) {
-                                            console.error('Error during image processing', error);
-                                            toast.error('Error during image processing');
-                                        }
-                                }
-                                } catch (error) {
-                                    toast.error('An error occurred');
-                                }
-    
-                            try {
-                                const apiUrl = 'https://api.client.rizomulk.uz/api/v1/post/create';
-                                const config = {
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    Authorization: `Bearer ${response.data.data}`,
-                                },
-                                };
-                        
-                                const postData = {
-                                    SubcatalogID: selectedOption,
-                                    postArea: {
-                                    general: products[index].apartmentSize,
-                                    kitchen: "0",
-                                    rasidential: "0"
-                                    },
-                                    postContact: {
-                                    tel: products[index].phoneNumber
-                                    },
-                                    postDescription: products[index].description,
-                                    postPrice: {
-                                    application: {},
-                                    total: parseInt(products[index].price.replace(/\D/g, '')), // Remove non-numeric characters
-                                    usd: false,
-                                    uzs: true
-                                    },
-                                    postTitle: products[index].title,
-                                    postDraft: false,
-                                    postDetails: {
-                                    contactEmail: "",
-                                    username: products[index].username,
-                                    roomsize: products[index].roomNumber,
-                                    bathroom: ["combined", "separated", "moreThanOne"],
-                                    balcony: "balcony",
-                                    window: ["yard", "outside"],
-                                    housetype: "panel",
-                                    floor1: products[index].floor1,
-                                    floor2: products[index].floor2,
-                                    status: "housingStock",
-                                    repair: "requiredRepeir",
-                                    dealType: "freeSale",
-                                    additional: ["bargainingPossible"],
-                                    region_id: null,
-                                    district_id: null,
-                                    addressKv: "",
-                                    maket: ["neighboring"],
-                                    nearby: ["parkGreen"],
-                                    facilities: ["telephone", "conditioner"],
-                                    typeContact: "owner",
-                                    catalog: "apartments"
-                                    },
-                                    postExtraData: {
-                                    floor: products[index].floor1,
-                                    floor2: products[index].floor2,
-                                    size: products[index].apartmentSize
-                                    },
-                                    postImage: products[index].images,
-                                    postLocation: {
-                                    coordinates: {
-                                        lat: 39.768193,
-                                        lng: 64.4556146
-                                    },
-                                    ids: {
-                                        region_id: null,
-                                        district_id: null
-                                    },
-                                    text: {
-                                        location: products[index].location,
-                                        home: products[index].location,
-                                        region: products[index].location,
-                                        district: products[index].location
-                                    }
-                                    },
-                                    postApplication: false
-                                };
-                        
-                                console.log(postData)
-                        
-                                if(!testMode){
-                                try {
-                                    await axios.post(apiUrl, postData, config);
-                                    setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
-                                    // setLoading((prevLoading) => prevLoading + loadCou);
-    
-                                    if(smsAccess){
+                                for (let indexImage = 0; indexImage < product.images.length; indexImage++) {
+                                    const product_image = product.images[indexImage];
                                     try {
-                                        // SMS
-                                        if (products && product.phoneNumber) {
-                                            const body = {
-                                                // mobile_phone: "998770707380",
-                                                mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                                                message: `Здравствуйте, ${product.username}! Теперь продать недвижимость стало проще.Ваш логин: ${product.phoneNumber}; Пароль: ${calculateMD5(product.username, product.phoneNumber)}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
-                                                from: 4546,
-                                            };
-                                            
-                                            setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
-
-    
-                                            const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
-                                            const config = {
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
-                                                },
-                                            };
-                                            const response1 = await axios.post(apiUrl, body, config);
-                                            console.log(response1)
-                                            setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1">${product.phoneNumber} Сообшения успешно отправленно!</p>`));                        
-                                            // SMS
+                                        if(!testMode){
+                                            const response = await fetch(product_image);
+                                            const blob = await response.blob();
+                                            const formData = new FormData();
+                                            formData.append('files', blob, 'image.jpg');
+                                            const uploadResponse = await fetch('https://api.client.rizomulk.uz/api/v1/minio/upload/files', {
+                                                method: 'POST',
+                                                body: formData,
+                                                headers: globalHeaders,
+                                            });
+                        
+                                            const jsonData = await uploadResponse.json();
+                                            if (uploadResponse.status === 200) {
+                                                products[index].images[indexImage] = jsonData.data[0].Name; // Make sure this structure is correct
+                                                console.log(products[index].images[indexImage]);
+                                                setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${jsonData.data[0].Link}">${jsonData.data[0].Name}</a>`);
+                                                // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
+                                            } else {
+                                            console.error('Error uploading the image to the server');
+                                        }}else{
+                                            setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${product_image}">${product_image}</a>`);
+                                            // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
                                         }
                                     } catch (error) {
-                                        console.error('SMS ERRROR:', error);
+                                        console.error('Error during image processing', error);
                                     }
                                 }
-    
-    
-                                } catch (error) {
-                                    console.error('POST RESPONSE:', error);
-                                }}else{
+        
+                                if(!testMode){
+                                    const apiUrl = 'https://api.client.rizomulk.uz/api/v1/post/create';
+                                    const config = {
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        Authorization: `Bearer ${response.data.data}`,
+                                    },
+                                    };
+                            
+                                    const postData = {
+                                        SubcatalogID: selectedOption,
+                                        postArea: {
+                                        general: products[index].apartmentSize,
+                                        kitchen: "0",
+                                        rasidential: "0"
+                                        },
+                                        postContact: {
+                                        tel: products[index].phoneNumber
+                                        },
+                                        postDescription: products[index].description,
+                                        postPrice: {
+                                        application: {},
+                                        total: parseInt(products[index].price.replace(/\D/g, '')), // Remove non-numeric characters
+                                        usd: false,
+                                        uzs: true
+                                        },
+                                        postTitle: products[index].title,
+                                        postDraft: false,
+                                        postDetails: {
+                                        contactEmail: "",
+                                        username: products[index].username,
+                                        roomsize: products[index].roomNumber,
+                                        bathroom: ["combined", "separated", "moreThanOne"],
+                                        balcony: "balcony",
+                                        window: ["yard", "outside"],
+                                        housetype: "panel",
+                                        floor1: products[index].floor1,
+                                        floor2: products[index].floor2,
+                                        status: "housingStock",
+                                        repair: "requiredRepeir",
+                                        dealType: "freeSale",
+                                        additional: ["bargainingPossible"],
+                                        region_id: null,
+                                        district_id: null,
+                                        addressKv: "",
+                                        maket: ["neighboring"],
+                                        nearby: ["parkGreen"],
+                                        facilities: ["telephone", "conditioner"],
+                                        typeContact: "owner",
+                                        catalog: "apartments"
+                                        },
+                                        postExtraData: {
+                                        floor: products[index].floor1,
+                                        floor2: products[index].floor2,
+                                        size: products[index].apartmentSize
+                                        },
+                                        postImage: products[index].images,
+                                        postLocation: {
+                                        coordinates: {
+                                            lat: 39.768193,
+                                            lng: 64.4556146
+                                        },
+                                        ids: {
+                                            region_id: null,
+                                            district_id: null
+                                        },
+                                        text: {
+                                            location: products[index].location,
+                                            home: products[index].location,
+                                            region: products[index].location,
+                                            district: products[index].location
+                                        }
+                                        },
+                                        postApplication: false
+                                    };
+                            
+                                    try {
+                                        await axios.post(apiUrl, postData, config);
+                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
+                                        // setLoading((prevLoading) => prevLoading + loadCou);
+        
+                                    } catch (error) {
+                                        setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Ошыбка при добавления продукта!</p>`));
+                                    }
+                                }else{
                                     setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
                                     // setLoading((prevLoading) => prevLoading + loadCou);
                                 }
-                                
-                            } catch (error) {
-                                console.error('Error posting data:', error);
                             }
     
                         }
@@ -620,224 +663,49 @@ function App() {
                             'https://api.client.rizomulk.uz/api/v1/account/sign-in', 
                             {
                                 phoneNumber: product.phoneNumber,
-                                password: calculateMD5(product.username, product.phoneNumber),
+                                password: calculateMD5(product.username, product.phoneNumber, true),
                             }, 
                             {'Content-Type': 'application/json',},
                         );
-
     
-                        setConsole((prevConsole) => prevConsole + (`</br><p class="text-green-400"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Успешно зaшли в аккаунт пользователя!</p>`));
-                    
-                        try {
-                            if (response.statusText == "OK") {
-                                // console.log(response.data.data)
-                                const draft_posts_data_data = await fetchDataTwins(false, response.data.data);
-                                const posted_posts_data_data = await fetchDataTwins(true, response.data.data);
+                        setConsole((prevConsole) => prevConsole + (`</br><p class="text-orange-400">${product.phoneNumber} Старый тип пороля!</p>`));
 
-                                let twinsAccess = true;
+                        // if(smsAccess){
+                        //     try {
+                        //         // SMS
+                        //         if (products && product.phoneNumber) {
+                        //             const body = {
+                        //                 // mobile_phone: "998905391575",
+                        //                 mobile_phone: product.phoneNumber.replace(/\+/g, ''),
+                        //                 message: `Assalomu alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga joylandi, login: ${product.phoneNumber}, parol: ${calculateMD5(product.username, product.phoneNumber, true)}`,
+                        //                 from: 4546,
+                        //             };
+                                    
+                        //             setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
 
-                                if(draft_posts_data_data != null)
-                                    for (let index_d = 0; index_d < draft_posts_data_data.length; index_d++) {
-                                        if (product.title == draft_posts_data_data[index_d].postTitle) {
-                                            twinsAccess = false;
-                                            setConsole((prevConsole) => prevConsole + (`</br><p class="text-yellow-400"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Twins detected</p>`));
-                                            break;
-                                            
-                                        }
-                                    }
 
-                                if(posted_posts_data_data != null)
-                                    for (let index_p = 0; index_p < posted_posts_data_data.length; index_p++) {
-                                        if (product.postTitle == posted_posts_data_data[index_p].postTitle) {
-                                            twinsAccess = false;
-                                            setConsole((prevConsole) => prevConsole + (`</br><p class="text-yellow-400"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Twins detected</p>`));
-                        
-                                            break;
-                                        }
-                                    }
-                                
-                                
-                                if(twinsAccess){
-                                    const globalHeaders = new Headers();
-                                    globalHeaders.append('Authorization', `Bearer ${response.data.data}`);
-                                    for (let indexImage = 0; indexImage < product.images.length; indexImage++) {
-                                        const product_image = product.images[indexImage];
-                                        try {
-                                            if(!testMode){
-                                                const response = await fetch(product_image);
-                                                const blob = await response.blob();
-                                                const formData = new FormData();
-                                                formData.append('files', blob, 'image.jpg');
-                                                const uploadResponse = await fetch('https://api.client.rizomulk.uz/api/v1/minio/upload/files', {
-                                                    method: 'POST',
-                                                    body: formData,
-                                                    headers: globalHeaders,
-                                                });
-                            
-                                                const jsonData = await uploadResponse.json();
-                                                if (uploadResponse.status === 200) {
-                                                    products[index].images[indexImage] = jsonData.data[0].Name; // Make sure this structure is correct
-                                                    console.log(products[index].images[indexImage]);
-                                                    setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${jsonData.data[0].Link}">${jsonData.data[0].Name}</a>`);
-                                                    // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
-                                                } else {
-                                                console.error('Error uploading the image to the server');
-                                            }}else{
-                                                setConsole((prevConsole) => prevConsole + `<br/><a class="text-yellow-500"  target="_blank" rel="noopener noreferrer" href="${product_image}">${product_image}</a>`);
-                                                // setLoading((prevLoading) => prevLoading + (33 / ((products.length *  products[0].images.length))));
-                                            }
-                                        } catch (error) {
-                                            console.error('Error during image processing', error);
-                                        }
-                                    }
-            
-                                    if(!testMode){
-                                        const apiUrl = 'https://api.client.rizomulk.uz/api/v1/post/create';
-                                        const config = {
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            Authorization: `Bearer ${response.data.data}`,
-                                        },
-                                        };
-                                
-                                        const postData = {
-                                            SubcatalogID: selectedOption,
-                                            postArea: {
-                                            general: products[index].apartmentSize,
-                                            kitchen: "0",
-                                            rasidential: "0"
-                                            },
-                                            postContact: {
-                                            tel: products[index].phoneNumber
-                                            },
-                                            postDescription: products[index].description,
-                                            postPrice: {
-                                            application: {},
-                                            total: parseInt(products[index].price.replace(/\D/g, '')), // Remove non-numeric characters
-                                            usd: false,
-                                            uzs: true
-                                            },
-                                            postTitle: products[index].title,
-                                            postDraft: false,
-                                            postDetails: {
-                                            contactEmail: "",
-                                            username: products[index].username,
-                                            roomsize: products[index].roomNumber,
-                                            bathroom: ["combined", "separated", "moreThanOne"],
-                                            balcony: "balcony",
-                                            window: ["yard", "outside"],
-                                            housetype: "panel",
-                                            floor1: products[index].floor1,
-                                            floor2: products[index].floor2,
-                                            status: "housingStock",
-                                            repair: "requiredRepeir",
-                                            dealType: "freeSale",
-                                            additional: ["bargainingPossible"],
-                                            region_id: null,
-                                            district_id: null,
-                                            addressKv: "",
-                                            maket: ["neighboring"],
-                                            nearby: ["parkGreen"],
-                                            facilities: ["telephone", "conditioner"],
-                                            typeContact: "owner",
-                                            catalog: "apartments"
-                                            },
-                                            postExtraData: {
-                                            floor: products[index].floor1,
-                                            floor2: products[index].floor2,
-                                            size: products[index].apartmentSize
-                                            },
-                                            postImage: products[index].images,
-                                            postLocation: {
-                                            coordinates: {
-                                                lat: 39.768193,
-                                                lng: 64.4556146
-                                            },
-                                            ids: {
-                                                region_id: null,
-                                                district_id: null
-                                            },
-                                            text: {
-                                                location: products[index].location,
-                                                home: products[index].location,
-                                                region: products[index].location,
-                                                district: products[index].location
-                                            }
-                                            },
-                                            postApplication: false
-                                        };
-                                
-                                        try {
-                                            await axios.post(apiUrl, postData, config);
-                                            setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
-                                            // setLoading((prevLoading) => prevLoading + loadCou);
-            
-                                        } catch (error) {
-                                            setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Ошыбка при добавления продукта!</p>`));
-                                        }
-                                    }else{
-                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
-                                        // setLoading((prevLoading) => prevLoading + loadCou);
-                                    }
-                                }
-        
-                            }
-                        } catch (error) {
-                            console.error('Ошибка при отправке запроса: '+ error)
-                            setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Проблема в создания поста</p>`));
-                        }
+                        //             const apiUrl = 'https://cors-anywhere.herokuapp.com/http://notify.eskiz.uz/api/message/sms/send';
+                        //             const config = {
+                        //                 headers: {
+                        //                     'Content-Type': 'application/json',
+                        //                     Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
+                        //                 },
+                        //             };
+                        //             const response1 = await axios.post(apiUrl, body, config);
+                        //             console.log(response1)
+                        //             setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Сообшения успешно отправленно!</p>`));                        
+                        //             // SMS
+                        //         }
+                        //     } catch (error) {
+                        //         console.error('SMS ERRROR:', error);
+                        // }}
                     } catch (error) {
-                        try {
-                            const response = await axios.post(
-                                'https://api.client.rizomulk.uz/api/v1/account/sign-in', 
-                                {
-                                    phoneNumber: product.phoneNumber,
-                                    password: calculateMD5(product.username, product.phoneNumber, true),
-                                }, 
-                                {'Content-Type': 'application/json',},
-                            );
-        
-                            setConsole((prevConsole) => prevConsole + (`</br><p class="text-orange-400">${product.phoneNumber} Старый тип пороля!</p>`));
-
-                            // if(smsAccess){
-                            //     try {
-                            //         // SMS
-                            //         if (products && product.phoneNumber) {
-                            //             const body = {
-                            //                 // mobile_phone: "998905391575",
-                            //                 mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                            //                 message: `Assalomu alaykum, ${product.username}, sizning elonlaringiz rizomulk.uz saytiga joylandi, login: ${product.phoneNumber}, parol: ${calculateMD5(product.username, product.phoneNumber, true)}`,
-                            //                 from: 4546,
-                            //             };
-                                        
-                            //             setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
-
-
-                            //             const apiUrl = 'https://cors-anywhere.herokuapp.com/http://notify.eskiz.uz/api/message/sms/send';
-                            //             const config = {
-                            //                 headers: {
-                            //                     'Content-Type': 'application/json',
-                            //                     Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
-                            //                 },
-                            //             };
-                            //             const response1 = await axios.post(apiUrl, body, config);
-                            //             console.log(response1)
-                            //             setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1"><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Сообшения успешно отправленно!</p>`));                        
-                            //             // SMS
-                            //         }
-                            //     } catch (error) {
-                            //         console.error('SMS ERRROR:', error);
-                            // }}
-                        } catch (error) {
-                            setConsole((prevConsole) => prevConsole + (`</br><p class="text-red-500 "><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Не можем зайти в аккаунт пользователя!</p>`));
-                            // setLoading((prevLoading) => prevLoading + loadCou);
-                        }
-                        
+                        setConsole((prevConsole) => prevConsole + (`</br><p class="text-red-500 "><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${product.phoneNumber}</span>  Не можем зайти в аккаунт пользователя!</p>`));
+                        // setLoading((prevLoading) => prevLoading + loadCou);
                     }
+                    
                 }
-
-
-                
+            }                
         }
         setLoading((prevLoading) => prevLoading + loadCou);
     }
@@ -847,25 +715,6 @@ function App() {
     
   };
 
-
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const handleOptionClick = (option) => {
-    setSelectedOption(option.id);
-    setDropdownOpen(false);
-  };
-
-  const toggleDropdown1 = () => {
-    setDropdownOpen1(!dropdownOpen1);
-  };
-
-  const handleOptionClick1 = (option) => {
-    setSelectedOption(option.id);
-    setDropdownOpen1(false);
-  };
 
 
 
@@ -879,107 +728,9 @@ function App() {
             <div style={{ width: `${loading}%` }} className="ease-in duration-300 rounded-lg flex flex-col justify-center text-center bg-green-400 shadow-none whitespace-nowrap"></div>
             </div>
         </div>
-
-        <div className='max-w-7xl mx-auto'>
-
-        <div className=' items-center'>
-        
-
-        <div className="mb-2 relative col-span-5">
-        <div
-          className="flex  items-center bg-gray-800/50 text-gray-100 p-3 rounded-md cursor-pointer"
-          onClick={toggleDropdown}
-        >
-          {selectedOption ? (
-            mem.find((option) => option.id === selectedOption)?.name || 'Куда отправить'
-          ) : (
-            'Куда отправить'
-          )}
-          <ChevronDownIcon className="w-3 h-3 ml-3" />
-        </div>
-        {dropdownOpen && (
-          <div className="z-30 w-96 absolute mt-2 p-3 bg-gray-900 rounded-md shadow-lg">
-            {mem.map((option) => (
-              <div
-                key={option.id}
-                className={classNames(
-                  'flex items-center justify-between p-1 text-white cursor-pointer',
-                  option.id === selectedOption
-                    ? 'bg-orange-500/10 font-semibold '
-                    : 'hover:bg-gray-700 '
-                )}
-                onClick={() => handleOptionClick(option)}
-              >
-                <span>
-                  <span className='text-xs bg-orange-500/10 p-1 rounded-lg mr-1 text-orange-400'>
-                    {option.parent}
-                  </span>{' '}
-                  {option.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-        </div>
-        </div>
-        </div>
-
-        <div className='snap-center flex p-3 relative max-w-7xl mx-auto rounded-lg w-full bg-gray-800/50 border-gray-800 focus:outline-none text-gray-200'>
-            <input 
-                type='checkbox' 
-                checked={withTokkenCors}
-                onChange={handleCheckboxChange}
-                className='h-6 w-6 mr-2 form-checkbox text-gray-800 focus:outline-none focus:border-gray-800 focus:ring focus:ring-gray-800 focus:ring-opacity-50'
-            />
-            <input 
-                className='relative focus:outline-none bg-transparent w-full text-gray-200'
-                value={tokkenCors}
-                onChange={handleInputTextChange}
-                placeholder='Parse Url'
-            />
-            </div>
-
-        <div className='snap-center flex p-3 mt-2 relative max-w-7xl mx-auto rounded-lg w-full bg-gray-800/50 border-gray-800 focus:outline-none text-gray-200'>
-            <input 
-                type='checkbox' 
-                checked={smsAccess}
-                onChange={(e) => setSmsAccess(e.target.checked)}
-                className='h-6 w-6 mr-2 form-checkbox text-gray-800 focus:outline-none focus:border-gray-800 focus:ring focus:ring-gray-800 focus:ring-opacity-50'
-            />
-            Высылать уведомления через СМС
         </div>
 
         
-
-        <div className='snap-center flex p-3 mt-2 relative max-w-7xl mx-auto rounded-lg w-full bg-gray-800/50 border-gray-800 focus:outline-none text-gray-200'>
-            <input 
-                type='checkbox' 
-                checked={fetchAllPages}
-                onChange={(e) => setFetchAllPages(e.target.checked)}
-                className='h-6 w-6 mr-2 form-checkbox text-gray-800 focus:outline-none focus:border-gray-800 focus:ring focus:ring-gray-800 focus:ring-opacity-50'
-            />
-            Найти по всем страницам (25)
-        </div>
-
-        <div className='snap-center flex p-3 mt-2 relative max-w-7xl mx-auto rounded-lg w-full bg-gray-800/50 border-gray-800 focus:outline-none text-gray-200'>
-            <input 
-                type='text' 
-                value={categoryFetch}
-                onChange={(e) => setCategoryFetch(e.target.value)}
-                className='relative focus:outline-none bg-transparent w-full text-gray-200'/>
-        </div>
-
-        <div className='snap-center flex p-3 mt-2 relative max-w-7xl mx-auto rounded-lg w-full bg-gray-800/50 border-gray-800 focus:outline-none text-gray-200'>
-            <input
-                type='checkbox'
-                checked={testMode}
-                onChange={(e) => setTestMode(e.target.checked)}
-                className='h-6 w-6 mr-2 form-checkbox text-gray-800 focus:outline-none focus:border-gray-800 focus:ring focus:ring-gray-800 focus:ring-opacity-50'
-            />
-            Тестовый режим
-        </div>
-
-        </div>
         
         
         <div className=" relative max-w-7xl mx-auto">
@@ -990,7 +741,7 @@ function App() {
                     <div className="ml-2 h-3 w-3 bg-green-500 rounded-full"></div>
                 </div>
                 
-                <div style={{ maxHeight: '28rem' }} className="font-mono mt-4 flex overflow-y-auto ease-in duration-300" ref={consoleRef}>
+                <div style={{ maxHeight: '38rem' }} className="font-mono mt-4 flex overflow-y-auto ease-in duration-300" ref={consoleRef}>
                 <span className="text-green-400">Libert:~$</span>
                 <p className="flex-1 typing items-center pl-2">
                     <div dangerouslySetInnerHTML={{ __html: console_main }} />
@@ -1003,24 +754,17 @@ function App() {
                     <PaperAirplaneIcon width={20} height={20} className='mr-1'/>
                     Push</div>
                 ): 
-                mem1.length != 0 ? (
+                mem1.length != 0 && (
                 <div onClick={fetchDataAndDisplayResults}
                 className='absolute right-4 top-4 py-1 px-3 rounded-lg 
                 hover:bg-orange-500/90 bg-orange-500 text-gray-900 flex'>
                     <RectangleStackIcon width={20} height={20} className='mr-1'/>
                     Parsing
                     </div>
-                ):(
-                    <div onClick={GetCat}
-                    className='absolute right-4 top-4 py-1 px-3 rounded-lg 
-                    hover:bg-orange-500/90 bg-orange-500 text-gray-900 flex'>
-                        <RectangleStackIcon width={20} height={20} className='mr-1'/>
-                        Get Categories
-                        </div>
                 )
             }
             <div className="bottom mb-2 flex">
-                    <div className="p-1 mr-2 border border-red-500 rounded-lg">{circlesRegions}/25</div>
+                    <div className="p-1 mr-2 border border-red-500 rounded-lg">{mem1.length}/{circlesRegions}</div>
                     <div className="p-1 mr-2 border border-orange-500 rounded-lg">{(fetchAllPages ? 25 : 1)}/{circlesPages}</div>
                     <div className="p-1 mr-2 border border-green-500 rounded-lg">{products.length}/{circlesProducts}</div>
                 </div>
