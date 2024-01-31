@@ -958,7 +958,7 @@ function App() {
             <input 
                 type='text' 
                 value={categoryFetch}
-                onChange={setCategoryFetch}
+                onChange={(e) => setCategoryFetch(e.target.value)}
                 className='relative focus:outline-none bg-transparent w-full text-gray-200'/>
         </div>
 
