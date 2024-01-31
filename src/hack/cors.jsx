@@ -225,7 +225,7 @@ const handleOpenUrlsInNewTabs = () => {
 
         const mem1__Mem = `mem1=${arrayUrlRegions.join(',')}`;
         const queryParams = [smsAccessQueryParam, fetchAllPagesQueryParam, categoryFetchQueryParam, selectedOptionQueryParam, testModeQueryParam, mem1__Mem].filter(Boolean).join('&');
-        const url = `http://localhost:3000/hack/olx/${i}?${queryParams}`;
+        const url = `http://keymarket.uz/hack/olx/${i}?${queryParams}`;
         urls.push(url);
     }
 
