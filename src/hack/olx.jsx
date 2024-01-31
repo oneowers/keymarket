@@ -560,12 +560,7 @@ function App() {
                                             const body = {
                                                 // mobile_phone: "998770707380",
                                                 mobile_phone: product.phoneNumber.replace(/\+/g, ''),
-                                                message: `Здравствуйте, ${product.username}!
-                                                Теперь продать недвижимость стало проще.
-                                                Ваш логин: ${product.phoneNumber};
-                                                Пароль: ${calculateMD5(product.username, product.phoneNumber)}.
-                                                Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz
-                                                `,
+                                                message: `Здравствуйте, ${product.username}! Теперь продать недвижимость стало проще.Ваш логин: ${product.phoneNumber}; Пароль: ${calculateMD5(product.username, product.phoneNumber)}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
                                                 from: 4546,
                                             };
                                             
