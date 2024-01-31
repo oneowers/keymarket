@@ -93,6 +93,11 @@ function App() {
     const [categoryFetch, setCategoryFetch] = useState("kommercheskie-pomeshcheniya");
     const { index: index_Param } = useParams();
     
+
+
+    const [circlesRegions, setCirclesRegions] = useState(0);
+    const [circlesPages, setCirclesPages] = useState(0);
+    const [circlesProducts, setCirclesProducts] = useState(0);
     
 
     
@@ -276,7 +281,9 @@ function App() {
           
         for (let i = (index_Param * 25) - 25; i < (mem1.length > (parseInt(index_Param, 10))*25 ? parseInt(index_Param, 10)*25 : mem1.length); i++) {
             const mem1Child = mem1[i];
+            setCirclesRegions(i)
             for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
+                setCirclesPages(index_pages)
               try {
                 const response = await axios.get("" + mem1Child.url + (fetchAllPages ? `&page=${index_pages}` : ''));
                 const htmlString = response.data;
@@ -413,9 +420,10 @@ function App() {
 
   
   const sendSms = async () => {
-
+      
+      const loadCou = ((100 - loading) / products.length)
     for (let index = 0; index < products.length; index++) {
-        const loadCou = ((100 - loading) / products.length)
+        setCirclesProducts(index)
         const product = products[index];
         if(product.phoneNumber){
                 try {
@@ -691,6 +699,7 @@ function App() {
                                             Authorization: `Bearer ${response.data.data}`,
                                         },
                                         };
+                                
                                         const postData = {
                                             SubcatalogID: selectedOption,
                                             postArea: {
@@ -726,7 +735,7 @@ function App() {
                                             additional: ["bargainingPossible"],
                                             region_id: null,
                                             district_id: null,
-                                            addressKv: "dosijsadflaf saf s",
+                                            addressKv: "",
                                             maket: ["neighboring"],
                                             nearby: ["parkGreen"],
                                             facilities: ["telephone", "conditioner"],
@@ -762,8 +771,6 @@ function App() {
                                             await axios.post(apiUrl, postData, config);
                                             setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
                                             // setLoading((prevLoading) => prevLoading + loadCou);
-
-            
             
                                         } catch (error) {
                                             setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Ошыбка при добавления продукта!</p>`));
@@ -978,10 +985,11 @@ function App() {
         <div className=" relative max-w-7xl mx-auto">
             <div className="coding inverse-toggle my-5 px-5 pt-4 shadow-lg text-gray-100 text-sm font-mono subpixel-antialiased bg-gray-800/50 pb-6  rounded-lg leading-normal">
                 <div className="top mb-2 flex">
-                <div className="h-3 w-3 bg-red-500 rounded-full"></div>
-                <div className="ml-2 h-3 w-3 bg-orange-500 rounded-full"></div>
-                <div className="ml-2 h-3 w-3 bg-green-500 rounded-full"></div>
+                    <div className="h-3 w-3 bg-red-500 rounded-full"></div>
+                    <div className="ml-2 h-3 w-3 bg-orange-500 rounded-full"></div>
+                    <div className="ml-2 h-3 w-3 bg-green-500 rounded-full"></div>
                 </div>
+                
                 <div style={{ maxHeight: '28rem' }} className="font-mono mt-4 flex overflow-y-auto ease-in duration-300" ref={consoleRef}>
                 <span className="text-green-400">Libert:~$</span>
                 <p className="flex-1 typing items-center pl-2">
@@ -1011,6 +1019,11 @@ function App() {
                         </div>
                 )
             }
+            <div className="bottom mb-2 flex">
+                    <div className="p-1 mr-2 border border-red-500 rounded-lg">{circlesRegions}/25</div>
+                    <div className="p-1 mr-2 border border-orange-500 rounded-lg">{(fetchAllPages ? 25 : 1)}/{circlesPages}</div>
+                    <div className="p-1 mr-2 border border-green-500 rounded-lg">{products.length}/{circlesProducts}</div>
+                </div>
             </div>
         </div>
 
