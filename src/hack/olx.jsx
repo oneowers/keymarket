@@ -115,6 +115,7 @@ function App() {
     const [circlesRegions, setCirclesRegions] = useState(0);
     const [circlesPages, setCirclesPages] = useState(0);
     const [circlesProducts, setCirclesProducts] = useState(0);
+    const [productsPushed, setProductsPushed] = useState(false);
     
 
     
@@ -289,7 +290,6 @@ function App() {
     };
 
 
-    let productsPushed = false;
   
   const sendSms = async () => {
       
@@ -684,7 +684,7 @@ function App() {
         setLoading((prevLoading) => prevLoading + loadCou);
     }
 
-    productsPushed = true;
+    setProductsPushed(true);
 
     
   };
