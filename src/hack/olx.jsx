@@ -752,10 +752,7 @@ function App() {
                     <br />
                 </p>
                 </div>
-                <div onClick={sendSmsFinish} className='absolute right-10 top-4 py-1 px-3 rounded-lg 
-                hover:bg-green-500/90 bg-green-500 text-gray-900 flex'>
-                    <PaperAirplaneIcon width={20} height={20} className='mr-1'/>
-                    Send Sms</div>
+                
 
                 {prodGet ? ((!productsPushed) ? (
                 <div onClick={sendSms} className='absolute right-4 top-4 py-1 px-3 rounded-lg 
@@ -782,6 +779,10 @@ function App() {
                     <div className="p-1 mr-2 border border-orange-500 rounded-lg">{(fetchAllPages ? 25 : 1)}/{circlesPages}</div>
                     <div className="p-1 mr-2 border border-green-500 rounded-lg">{products.length}/{circlesProducts}</div>
                 </div>
+                <div onClick={sendSmsFinish} className='absolute right-4 bottom py-1 px-3 rounded-lg 
+                hover:bg-green-500/90 bg-green-500 text-gray-900 flex'>
+                    <PaperAirplaneIcon width={20} height={20} className='mr-1'/>
+                    Send Sms</div>
             </div>
         </div>
 
