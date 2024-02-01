@@ -690,33 +690,34 @@ function App() {
   };
 
   const sendSmsFinish = async () => {
-    try {
       for (const sms of smsInfo) {
-        const body = {
-          mobile_phone: sms[1].replace(/\+/g, ''),
-          message: `Здравствуйте, ${sms[1]}! Теперь продать недвижимость стало проще. Ваш логин: ${sms[1]}; Пароль: ${calculateMD5(sms[0], sms[1])}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
-          from: 4546,
-        };
-  
-        setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
-  
-        const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
-          },
-        };
-  
-        const response = await axios.post(apiUrl, body, config);
-  
-        console.log(response);
-  
-        setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1">${sms[1]} Сообщение успешно отправлено!</p>`));
-      }
-    } catch (error) {
-      console.error('SMS ERROR:', error);
-      setConsole((prevConsole) => prevConsole + (`<p class="text-red-500 bg-red-900 rounded-lg y-1">Ошибка при отправке SMS: ${error.message}</p>`));
+        try {
+            const body = {
+            mobile_phone: sms[1].replace(/\+/g, ''),
+            message: `Здравствуйте, ${sms[1]}! Теперь продать недвижимость стало проще. Ваш логин: ${sms[1]}; Пароль: ${calculateMD5(sms[0], sms[1])}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
+            from: 4546,
+            };
+    
+            setConsole((prevConsole) => prevConsole + (`<br/><p class="bg-indigo-900 rounded-lg px-5 max-w-sm py-1 mb-2 text-indigo-200 border-dashed border-2 border-indigo-500">${body.message}</p>`));
+    
+            const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('http://notify.eskiz.uz/api/message/sms/send');
+            const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg3NzQ3NDIsImlhdCI6MTcwNjE4Mjc0Miwicm9sZSI6InVzZXIiLCJzaWduIjoiYzMyM2M2ZWFjZWQwOTg4N2E5ZTUwYTc4MDNkOWQ0NmJkNjczNGMyMTExNDZlNjMzNzAzYjcxNDkzYjMyNGM4YyIsInN1YiI6IjI1MDMifQ.b_HrJVFqdenseTGC2GVxdI3ZG1YfW02-2Qs_rUdOR04`,
+            },
+            };
+    
+            const response = await axios.post(apiUrl, body, config);
+    
+            console.log(response);
+    
+            setConsole((prevConsole) => prevConsole + (`<p class="text-yellow-300 bg-yellow-900 rounded-lg y-1">${sms[1]} Сообщение успешно отправлено!</p>`));
+        
+        } catch (error) {
+            console.error('SMS ERROR:', error);
+            setConsole((prevConsole) => prevConsole + (`<p class="text-red-500 bg-red-900 rounded-lg y-1">Ошибка при отправке SMS: ${error.message}</p>`));
+        }
     }
   };
   
