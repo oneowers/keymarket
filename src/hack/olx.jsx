@@ -109,6 +109,8 @@ function App() {
     const testMode = queryParams.testMode == "true";
     const selectedOption = queryParams.selectedOption;
     const mem1 = queryParams.mem1?.split(',') || [];;
+
+    console.log(mem1)
     
 
 
