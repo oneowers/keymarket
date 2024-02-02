@@ -156,7 +156,7 @@ const GetCat = async () => {
 
                 
 
-                for (let indexFloor = 0; indexFloor <= 16; indexFloor++) {
+                for (let indexFloor = 1; indexFloor <= 16; indexFloor++) {
                     districts_data.data.map(district_data => {
                         const url = `${categoryFetch}/${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}&search%5Bfilter_float_floor:from%5D=${indexFloor}`;
                         setConsole((prevConsole) => prevConsole + (`<p class="text-green-500 bg-green-900 rounded-lg y-1">${url}</p>`));
