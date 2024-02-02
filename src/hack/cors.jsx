@@ -154,6 +154,7 @@ const GetCat = async () => {
 
                 const districts_data = await response2.json();
 
+
                 return districts_data.data.map(district_data => ({
                     category_id: 1,
                     region_data: parentCategory,
@@ -161,10 +162,28 @@ const GetCat = async () => {
                     district_data: district_data,
                     url: `${categoryFetch}/${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}`
                 }));
-                } 
+                } else {
+                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
+
+                return {
+                    category_id: 1,
+                    region_data: parentCategory,
+                    city_data: getDistrict,
+                    district_data: [],
+                    url: `${categoryFetch}/${getDistrict.normalized_name}/?`
+                };
+                }
 
             } catch (error) {
-  
+                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
+                toast.error('getDistrict categories olx error');
+                return {
+                    category_id: 1,
+                    region_data: parentCategory,
+                    city_data: getDistrict,
+                    district_data: [],
+                    url: `${categoryFetch}/${getDistrict.normalized_name}/?`
+                };
             }
             }));
 
@@ -194,23 +213,20 @@ const handleOpenUrlsInNewTabs = () => {
     const testModeQueryParam = `testMode=${testMode}`;
     const selectedOptionQueryParam = `selectedOption=${selectedOption || ''}`; // Make sure it's not undefined
 
+
     const urls = [];
     for (let i = 1; i <= windowsCount; i++) {
-        const olxUrlRegions = Math.floor(mem1.length / windowsCount);
-        const arrayUrlRegions = [];
+        const olxUrlRegions =  Math.floor(mem1.length / windowsCount);
+        const arrayUrlRegions = []
         for (let index = (i * olxUrlRegions) - olxUrlRegions; index < i * olxUrlRegions; index++) {
-            if(mem1[index] != null) arrayUrlRegions.push(mem1[index].url);
+            arrayUrlRegions.push(mem1[index].url);
         }
-        
-        
 
 
         const mem1__Mem = `mem1=${arrayUrlRegions.join(',')}`;
         const queryParams = [smsAccessQueryParam, fetchAllPagesQueryParam, categoryFetchQueryParam, selectedOptionQueryParam, testModeQueryParam, mem1__Mem].filter(Boolean).join('&');
-        
-        console.log(queryParams)
-        // const url = `http://localhost:3000/hack/olx/${i}?${queryParams}`;
-        const url = `http://keymarket.uz/hack/olx/${i}?${queryParams}`;
+        const url = `http://localhost:3000/hack/olx/${i}?${queryParams}`;
+        // const url = `http://keymarket.uz/hack/olx/${i}?${queryParams}`;
         urls.push(url);
     }
 
