@@ -445,7 +445,7 @@ function App() {
                             try {
                                 await axios.post(apiUrl, postData, config);
                                 // setLoading((prevLoading) => prevLoading + loadCou);
-                                setPosts(posts+=1)
+                                setPosts(prevPosts => prevPosts + 1);
                                 setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                 if(smsAccess){
                                     setSmsInfo(prevSmsInfo => [...prevSmsInfo, [product.username, product.phoneNumber]]);
@@ -455,7 +455,7 @@ function App() {
                             } catch (error) {
                                 console.error('POST RESPONSE:', error);
                             }}else{
-                                setPosts(posts+=1)
+                                setPosts(prevPosts => prevPosts + 1);
                                 setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                 // setLoading((prevLoading) => prevLoading + loadCou);
                             }
@@ -624,7 +624,7 @@ function App() {
                             
                                     try {
                                         await axios.post(apiUrl, postData, config);
-                                        setPosts(posts+=1)
+                                        setPosts(prevPosts => prevPosts + 1);
                                         setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                         // setLoading((prevLoading) => prevLoading + loadCou);
         
@@ -632,7 +632,7 @@ function App() {
                                         setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Ошыбка при добавления продукта!</p>`));
                                     }
                                 }else{
-                                    setPosts(posts+=1)
+                                    setPosts(prevPosts => prevPosts + 1);
                                     setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                     // setLoading((prevLoading) => prevLoading + loadCou);
                                 }
