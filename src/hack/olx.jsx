@@ -146,9 +146,9 @@ function App() {
         setConsole((prevConsole) => prevConsole + '<p class="text-green-400">Start parsing...</p><br/>');
         setLoading(0);
         for (let i = 0; i < mem1.length; i++) {
-            for (let sizeFloor = 1; sizeFloor <= 500; sizeFloor++) {
+            for (let sizeFloor = 1; sizeFloor <= 500; sizeFloor+=5) {
                 setCircleFloor(sizeFloor)
-                const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_total_area:from%5D=${sizeFloor}&search%5Bfilter_float_total_area:to%5D=${sizeFloor+1}`;
+                const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_total_area:from%5D=${sizeFloor}&search%5Bfilter_float_total_area:to%5D=${sizeFloor+5}`;
                 setCirclesRegions(i)
                 setLoading((prevLoading) => prevLoading + (100 / mem1.length) );
 
