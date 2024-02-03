@@ -146,7 +146,7 @@ function App() {
         setConsole((prevConsole) => prevConsole + '<p class="text-green-400">Start parsing...</p><br/>');
         setLoading(0);
         for (let i = 0; i < mem1.length; i++) {
-            for (let sizeFloor = 1; sizeFloor <= 1000; sizeFloor++) {
+            for (let sizeFloor = 1; sizeFloor <= 500; sizeFloor++) {
                 setCircleFloor(sizeFloor)
                 const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_total_area:from%5D=${sizeFloor}&search%5Bfilter_float_total_area:to%5D=${sizeFloor+1}`;
                 setCirclesRegions(i)
@@ -155,122 +155,122 @@ function App() {
                 for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
                     setCirclesPages(index_pages)
                     
-                try {
-                    const response = await axios.get(mem1Child + (fetchAllPages ? `&page=${index_pages}` : ''));
-                    const htmlString = response.data;
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlString, 'text/html');
+                    try {
+                        const response = await axios.get(mem1Child + (fetchAllPages ? `&page=${index_pages}` : ''));
+                        const htmlString = response.data;
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(htmlString, 'text/html');
 
-                    const fetchProductDetails = async (link) => {
-                        const productDetailsResponse = await axios.get(`https://www.olx.uz${link}`);
-                        const productDetailsHtmlString = productDetailsResponse.data;
-                        const productDetailsDoc = parser.parseFromString(productDetailsHtmlString, 'text/html');
-                        
-                        const description = productDetailsDoc.querySelector('[data-cy=ad_description] div').textContent;
-                        const username = productDetailsDoc.querySelector('[data-testid=user-profile-link] div div h4').textContent;
-
-                        const phoneNumbers = findPhoneNumbers(description);
-                        // if(phoneNumbers.length == 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-orange-200 bg-orange-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
-                        if(phoneNumbers.length != 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
-                        const phoneNumber = phoneNumbers[0];
-
-
-                        // if(withTokkenCors){
-                        //     const idElement = productDetailsDoc.querySelector('span.css-12hdxwj');
-                        //     const id = parseInt(idElement.textContent.split(':')[1].trim()); 
-
-                        //     let urlOlx = `https://www.olx.uz/api/v1/offers/${id}/limited-phones/`;
-
-                        //     try {
-                        //         if (tokkenCors !== "") {
-                        //             urlOlx = 'https://corsproxy.io/?' + encodeURIComponent(urlOlx);
-                        //         }
+                        const fetchProductDetails = async (link) => {
+                            const productDetailsResponse = await axios.get(`https://www.olx.uz${link}`);
+                            const productDetailsHtmlString = productDetailsResponse.data;
+                            const productDetailsDoc = parser.parseFromString(productDetailsHtmlString, 'text/html');
                             
-                        //         const response = await fetch(urlOlx, {
-                        //             method: 'GET',
-                        //             headers: {
-                        //                 'Access-Control-Allow-Origin': '*',
-                        //                 'Authorization': `Bearer ${tokkenCors}`,
-                        //                 'Content-Type': 'application/json',
-                        //             }
-                        //         });
+                            const description = productDetailsDoc.querySelector('[data-cy=ad_description] div').textContent;
+                            const username = productDetailsDoc.querySelector('[data-testid=user-profile-link] div div h4').textContent;
 
-                        //         if (!response.ok) {
-                        //             throw new Error(`HTTP error! Status: ${response.status}`);
-                        //         }
+                            const phoneNumbers = findPhoneNumbers(description);
+                            // if(phoneNumbers.length == 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-orange-200 bg-orange-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
+                            if(phoneNumbers.length != 0) setConsole((prevConsole) => prevConsole + `<br/><span class="text-blue-200 bg-blue-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${phoneNumbers[0]}</span>`);
+                            const phoneNumber = phoneNumbers[0];
 
-                        //         const data = await response.json();
-                        //         setConsole((prevConsole) => prevConsole + `<span class="text-green-200 bg-green-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${findPhoneNumbers(data.data.phones[0])}</span>`);
-                        //         // Handle the response data as needed
-                        //     } catch (error) {
-                        //         console.error('Error:', error.message);
-                        //     }
-                        // }
+
+                            // if(withTokkenCors){
+                            //     const idElement = productDetailsDoc.querySelector('span.css-12hdxwj');
+                            //     const id = parseInt(idElement.textContent.split(':')[1].trim()); 
+
+                            //     let urlOlx = `https://www.olx.uz/api/v1/offers/${id}/limited-phones/`;
+
+                            //     try {
+                            //         if (tokkenCors !== "") {
+                            //             urlOlx = 'https://corsproxy.io/?' + encodeURIComponent(urlOlx);
+                            //         }
+                                
+                            //         const response = await fetch(urlOlx, {
+                            //             method: 'GET',
+                            //             headers: {
+                            //                 'Access-Control-Allow-Origin': '*',
+                            //                 'Authorization': `Bearer ${tokkenCors}`,
+                            //                 'Content-Type': 'application/json',
+                            //             }
+                            //         });
+
+                            //         if (!response.ok) {
+                            //             throw new Error(`HTTP error! Status: ${response.status}`);
+                            //         }
+
+                            //         const data = await response.json();
+                            //         setConsole((prevConsole) => prevConsole + `<span class="text-green-200 bg-green-900/70 px-2 py-1 mr-3 text-xs rounded-lg">${findPhoneNumbers(data.data.phones[0])}</span>`);
+                            //         // Handle the response data as needed
+                            //     } catch (error) {
+                            //         console.error('Error:', error.message);
+                            //     }
+                            // }
+                            
+                            const roomNumber = getRoomNumber("Количество комнат", productDetailsDoc);
+                            const apartmentSize = getRoomNumber("Общая площадь", productDetailsDoc);
+                            const floor1 = getRoomNumber("Этаж", productDetailsDoc);
+                            const floor2 = getRoomNumber("Этажность дома", productDetailsDoc);
                         
-                        const roomNumber = getRoomNumber("Количество комнат", productDetailsDoc);
-                        const apartmentSize = getRoomNumber("Общая площадь", productDetailsDoc);
-                        const floor1 = getRoomNumber("Этаж", productDetailsDoc);
-                        const floor2 = getRoomNumber("Этажность дома", productDetailsDoc);
-                    
 
-                    const images = Array.from(productDetailsDoc.querySelectorAll('.swiper-slide[data-cy=adPhotos-swiperSlide] img')).map(
-                        (img) => img.getAttribute('src')
-                    );
+                        const images = Array.from(productDetailsDoc.querySelectorAll('.swiper-slide[data-cy=adPhotos-swiperSlide] img')).map(
+                            (img) => img.getAttribute('src')
+                        );
 
-                    return { description, username, images , roomNumber, apartmentSize, floor1, floor2, phoneNumber};
-                    };
-            // 
-                    const listProducts =  doc.firstElementChild.querySelector('.css-oukcj3').querySelectorAll('.css-1sw7q4x')
-                    const countInPage = doc.firstElementChild.querySelector('[data-testid=total-count]').textContent.match(/\d+/);
-                    // toast(parseInt(countInPage[0], 10))
-                    for (const productElement of listProducts) {
-
-                        const title = productElement.querySelector('h6').textContent;
-                        const price = productElement.querySelector('.css-10b0gli').textContent.split(' сум')[0].replace(/\s/g, '');;
-                        // const locationDate = productElement.querySelector('.css-veheph').textContent;
-                        const locationDate = productElement.querySelector('[data-testid=location-date]').textContent;
-
-                        // 
-                        
-                        const location = locationDate.split(' - ')[0];
-                        const imageURL = productElement.querySelector('img').getAttribute('src');
-                        const isTop = productElement.querySelector('.css-1jh69qu') !== null;
-                        const link = productElement.querySelector('a.css-rc5s2u').getAttribute('href');
-                        const locationParts = location.split(', ');
-                        const region = locationParts[0];
-                        const district = locationParts[1];
-
-                        // https://www.olx.uz/api/v1/offers/48388767/limited-phones/
-                        
-                        const { description, username, images , roomNumber, apartmentSize, floor1, floor2, phoneNumber} = await fetchProductDetails(link);
-
-                        const product = {
-                            title,
-                            price,
-                            location,
-                            countInPage,
-                            imageURL,
-                            isTop,
-                            link: `https://www.olx.uz${link}`,
-                            username,
-                            description,
-                            images,
-                            roomNumber,
-                            apartmentSize,
-                            floor1, 
-                            floor2,
-                            region,
-                            district,
-                            phoneNumber,
+                        return { description, username, images , roomNumber, apartmentSize, floor1, floor2, phoneNumber};
                         };
+                // 
+                        const listProducts =  doc.firstElementChild.querySelector('.css-oukcj3').querySelectorAll('.css-1sw7q4x')
+                        const countInPage = doc.firstElementChild.querySelector('[data-testid=total-count]').textContent.match(/\d+/);
+                        // toast(parseInt(countInPage[0], 10))
+                        for (const productElement of listProducts) {
 
-                        if(phoneNumber != null) setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://www.olx.uz${link}`}">${title}</a><br/>`);
-                        if(phoneNumber != null) setProducts((prevProducts) => [...prevProducts, product]);
+                            const title = productElement.querySelector('h6').textContent;
+                            const price = productElement.querySelector('.css-10b0gli').textContent.split(' сум')[0].replace(/\s/g, '');;
+                            // const locationDate = productElement.querySelector('.css-veheph').textContent;
+                            const locationDate = productElement.querySelector('[data-testid=location-date]').textContent;
 
-                    }
+                            // 
+                            
+                            const location = locationDate.split(' - ')[0];
+                            const imageURL = productElement.querySelector('img').getAttribute('src');
+                            const isTop = productElement.querySelector('.css-1jh69qu') !== null;
+                            const link = productElement.querySelector('a.css-rc5s2u').getAttribute('href');
+                            const locationParts = location.split(', ');
+                            const region = locationParts[0];
+                            const district = locationParts[1];
+
+                            // https://www.olx.uz/api/v1/offers/48388767/limited-phones/
+                            
+                            const { description, username, images , roomNumber, apartmentSize, floor1, floor2, phoneNumber} = await fetchProductDetails(link);
+
+                            const product = {
+                                title,
+                                price,
+                                location,
+                                countInPage,
+                                imageURL,
+                                isTop,
+                                link: `https://www.olx.uz${link}`,
+                                username,
+                                description,
+                                images,
+                                roomNumber,
+                                apartmentSize,
+                                floor1, 
+                                floor2,
+                                region,
+                                district,
+                                phoneNumber,
+                            };
+
+                            if(phoneNumber != null) setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://www.olx.uz${link}`}">${title}</a><br/>`);
+                            if(phoneNumber != null) setProducts((prevProducts) => [...prevProducts, product]);
+
+                        }
 
 
-                    if(parseInt(countInPage[0], 10) < ((index_pages+1) * 52)){toast(countInPage); sizeFloor++; break}
+                    if(parseInt(countInPage[0], 10) < ((index_pages+1) * 52)){toast(countInPage); break}
                     // console.log(products)
                 } catch (error) {}
                 
