@@ -161,29 +161,29 @@ const GetCat = async () => {
                     region_data: parentCategory,
                     city_data: getDistrict,
                     district_data: district_data,
-                    url: `${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}`
+                    url: `${categoryFetch}/${childCategory ? `${childCategory}/` : ''}${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}`
                 }));
                 } else {
-                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
+                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${categoryFetch}/${childCategory ? `${childCategory}/` : ''}${getDistrict.normalized_name}/?</p>`));
 
                 return {
                     category_id: 1,
                     region_data: parentCategory,
                     city_data: getDistrict,
                     district_data: [],
-                    url: `${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?`
+                    url: `${categoryFetch}/${childCategory ? `${childCategory}/` : ''}${getDistrict.normalized_name}/?`
                 };
                 }
 
             } catch (error) {
-                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
+                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${categoryFetch}/${childCategory ? `${childCategory}/` : ''}${getDistrict.normalized_name}/?</p>`));
                 toast.error('getDistrict categories olx error');
                 return {
                     category_id: 1,
                     region_data: parentCategory,
                     city_data: getDistrict,
                     district_data: [],
-                    url: `${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?`
+                    url: `${categoryFetch}/${childCategory ? `${childCategory}/` : ''}${getDistrict.normalized_name}/?`
                 };
             }
             }));
