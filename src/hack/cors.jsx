@@ -19,6 +19,7 @@ const YourComponent = () => {
   const [smsAccess, setSmsAccess] = useState(false);
   const [fetchAllPages, setFetchAllPages] = useState(false);
   const [categoryFetch, setCategoryFetch] = useState('zemlja');
+  const [childCategory, setChildCategory] = useState('arenda-dolgosrochnaya');
   const [testMode, setTestMode] = useState(false);
   const [mem, setMem] = useState([]);
   const [mem1, setMem1] = useState([]);
@@ -160,29 +161,29 @@ const GetCat = async () => {
                     region_data: parentCategory,
                     city_data: getDistrict,
                     district_data: district_data,
-                    url: `${categoryFetch}/${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}`
+                    url: `${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?search%5Bdistrict_id%5D=${district_data.id}`
                 }));
                 } else {
-                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
+                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
 
                 return {
                     category_id: 1,
                     region_data: parentCategory,
                     city_data: getDistrict,
                     district_data: [],
-                    url: `${categoryFetch}/${getDistrict.normalized_name}/?`
+                    url: `${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?`
                 };
                 }
 
             } catch (error) {
-                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
+                setConsole((prevConsole) => prevConsole + (`</br><p class="text-teal-400">${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?</p>`));
                 toast.error('getDistrict categories olx error');
                 return {
                     category_id: 1,
                     region_data: parentCategory,
                     city_data: getDistrict,
                     district_data: [],
-                    url: `${categoryFetch}/${getDistrict.normalized_name}/?`
+                    url: `${childCategory ? `${childCategory}/` : ''}${categoryFetch}/${getDistrict.normalized_name}/?`
                 };
             }
             }));
@@ -330,6 +331,15 @@ const handleOpenUrlsInNewTabs = () => {
           type='text' 
           value={windowsCount}
           onChange={(e) => setWindowsCount(e.target.value)}
+          className='relative focus:outline-none bg-transparent w-full text-gray-200'
+        />
+      </div>
+
+      <div className='snap-center flex p-3 mt-2 relative max-w-7xl mx-auto rounded-lg w-full bg-gray-800/50 border-gray-800 focus:outline-none text-gray-200'>
+        <input 
+          type='text' 
+          value={childCategory}
+          onChange={(e) => setChildCategory(e.target.value)}
           className='relative focus:outline-none bg-transparent w-full text-gray-200'
         />
       </div>

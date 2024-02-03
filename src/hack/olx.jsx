@@ -76,6 +76,7 @@ function calculateMD5(username, phoneNumber, fullCode = false) {
 function App() {
     const [console_main, setConsole] = useState("");
     const [loading, setLoading] = useState(0);
+    const [posts, setPosts] = useState(0);
     const [token, setToken] = useState('');
     const [prodGet, setProdGet] = useState(false);
     const [urlSet, setUrlSet] = useState('');
@@ -443,9 +444,9 @@ function App() {
                             if(!testMode){
                             try {
                                 await axios.post(apiUrl, postData, config);
-                                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
                                 // setLoading((prevLoading) => prevLoading + loadCou);
-
+                                setPosts(posts+=1)
+                                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                 if(smsAccess){
                                     setSmsInfo(prevSmsInfo => [...prevSmsInfo, [product.username, product.phoneNumber]]);
                                 }
@@ -454,7 +455,8 @@ function App() {
                             } catch (error) {
                                 console.error('POST RESPONSE:', error);
                             }}else{
-                                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
+                                setPosts(posts+=1)
+                                setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                 // setLoading((prevLoading) => prevLoading + loadCou);
                             }
                             
@@ -622,14 +624,16 @@ function App() {
                             
                                     try {
                                         await axios.post(apiUrl, postData, config);
-                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
+                                        setPosts(posts+=1)
+                                        setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                         // setLoading((prevLoading) => prevLoading + loadCou);
         
                                     } catch (error) {
                                         setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Ошыбка при добавления продукта!</p>`));
                                     }
                                 }else{
-                                    setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${index + 1}</p>`));
+                                    setPosts(posts+=1)
+                                    setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                     // setLoading((prevLoading) => prevLoading + loadCou);
                                 }
                             }
@@ -702,7 +706,7 @@ function App() {
         try {
             const body = {
             mobile_phone: sms[1].replace(/\+/g, ''),
-            message: `Здравствуйте, ${sms[1]}! Теперь продать недвижимость стало проще. Ваш логин: ${sms[1]}; Пароль: ${calculateMD5(sms[0], sms[1])}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
+            message: `Здравствуйте, ${sms[0]}! Теперь продать недвижимость стало проще. Ваш логин: ${sms[1]}; Пароль: ${calculateMD5(sms[0], sms[1])}. Мы сделаем всё за вас, вся недвижимость доступна здесь: https://rizomulk.uz`,
             from: 4546,
             };
     
@@ -727,6 +731,7 @@ function App() {
             setConsole((prevConsole) => prevConsole + (`<p class="text-red-500 bg-red-900 rounded-lg y-1">Ошибка при отправке SMS: ${error.message}</p>`));
         }
     }
+    alert("FINISH!!!")
   };
   
 
