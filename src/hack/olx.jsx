@@ -148,7 +148,7 @@ function App() {
         for (let i = 0; i < mem1.length; i++) {
             for (let sizeFloor = 1; sizeFloor <= 500; sizeFloor+=5) {
                 setCircleFloor(sizeFloor)
-                const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_total_area:from%5D=${sizeFloor}&search%5Bfilter_float_total_area:to%5D=${sizeFloor+5}`;
+                const mem1Child = `https://corsproxy.io/?https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_total_area:from%5D=${sizeFloor}&search%5Bfilter_float_total_area:to%5D=${sizeFloor+5}`;
                 setCirclesRegions(i)
                 setLoading((prevLoading) => prevLoading + (100 / mem1.length) );
 
@@ -162,7 +162,7 @@ function App() {
                         const doc = parser.parseFromString(htmlString, 'text/html');
 
                         const fetchProductDetails = async (link) => {
-                            const productDetailsResponse = await axios.get(`https://www.olx.uz${link}`);
+                            const productDetailsResponse = await axios.get(`https://corsproxy.io/?https://www.olx.uz${link}`);
                             const productDetailsHtmlString = productDetailsResponse.data;
                             const productDetailsDoc = parser.parseFromString(productDetailsHtmlString, 'text/html');
                             
@@ -179,7 +179,7 @@ function App() {
                             //     const idElement = productDetailsDoc.querySelector('span.css-12hdxwj');
                             //     const id = parseInt(idElement.textContent.split(':')[1].trim()); 
 
-                            //     let urlOlx = `https://www.olx.uz/api/v1/offers/${id}/limited-phones/`;
+                            //     let urlOlx = `https://corsproxy.io/?https://www.olx.uz/api/v1/offers/${id}/limited-phones/`;
 
                             //     try {
                             //         if (tokkenCors !== "") {
@@ -240,7 +240,7 @@ function App() {
                             const region = locationParts[0];
                             const district = locationParts[1];
 
-                            // https://www.olx.uz/api/v1/offers/48388767/limited-phones/
+                            // https://corsproxy.io/?https://www.olx.uz/api/v1/offers/48388767/limited-phones/
                             
                             const { description, username, images , roomNumber, apartmentSize, floor1, floor2, phoneNumber} = await fetchProductDetails(link);
 
@@ -251,7 +251,7 @@ function App() {
                                 countInPage,
                                 imageURL,
                                 isTop,
-                                link: `https://www.olx.uz${link}`,
+                                link: `https://corsproxy.io/?https://www.olx.uz${link}`,
                                 username,
                                 description,
                                 images,
@@ -264,7 +264,7 @@ function App() {
                                 phoneNumber,
                             };
 
-                            if(phoneNumber != null) setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://www.olx.uz${link}`}">${title}</a><br/>`);
+                            if(phoneNumber != null) setConsole((prevConsole) => prevConsole + `<a  target="_blank" rel="noopener noreferrer" class="text-blue-400" href="${`https://corsproxy.io/?https://www.olx.uz${link}`}">${title}</a><br/>`);
                             if(phoneNumber != null) setProducts((prevProducts) => [...prevProducts, product]);
 
                         }
