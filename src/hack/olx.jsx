@@ -145,21 +145,17 @@ function App() {
     const fetchDataAndDisplayResults = async () => {
         setConsole((prevConsole) => prevConsole + '<p class="text-green-400">Start parsing...</p><br/>');
         setLoading(0);
-            // let itsEnd = false
         for (let i = 0; i < mem1.length; i++) {
-                // console.log(itsEnd)
-                // if(itsEnd) break
-
-            for (let floors = 1; floors <= 16; floors++) {
-                setCircleFloor(floors)
-                const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_floor%3Afrom%5D=${floors}`;
+            for (let sizeFloor = 1; sizeFloor <= 1000; sizeFloor++) {
+                setCircleFloor(sizeFloor)
+                const mem1Child = `https://www.olx.uz/nedvizhimost/${mem1[i]}search%5Bfilter_float_total_area:from%5D=${sizeFloor}&search%5Bfilter_float_total_area:to%5D=${sizeFloor+1}`;
                 setCirclesRegions(i)
                 setLoading((prevLoading) => prevLoading + (100 / mem1.length) );
 
                 for (let index_pages = 1; index_pages < (fetchAllPages ? 25 : 2); index_pages++) {
                     setCirclesPages(index_pages)
                     
-                    try {
+                try {
                     const response = await axios.get(mem1Child + (fetchAllPages ? `&page=${index_pages}` : ''));
                     const htmlString = response.data;
                     const parser = new DOMParser();
@@ -274,13 +270,12 @@ function App() {
                     }
 
 
-                    if(parseInt(countInPage[0], 10) < ((index_pages+1) * 52)){toast(countInPage); floors++; break}
+                    if(parseInt(countInPage[0], 10) < ((index_pages+1) * 52)){toast(countInPage); sizeFloor++; break}
                     // console.log(products)
-                } catch (error) {
-                    // SetProducts([productData]);
-                    }
-                }
-            };
+                } catch (error) {}
+                
+                };
+            }
         }
         setProdGet(true) 
     };
@@ -432,8 +427,8 @@ function App() {
                                 text: {
                                     location: products[index].location,
                                     home: products[index].location,
-                                    region: products[index].location,
-                                    district: products[index].location
+                                    region: products[index].region,
+                                    district: products[index].district
                                 }
                                 },
                                 postApplication: false
@@ -445,9 +440,9 @@ function App() {
                             try {
                                 await axios.post(apiUrl, postData, config);
                                 // setLoading((prevLoading) => prevLoading + loadCou);
-                                setPosts(prevPosts => prevPosts + 1);
+                                setPosts(posts + 1);
                                 setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
-                                if(smsAccess){
+                                if(true){
                                     setSmsInfo(prevSmsInfo => [...prevSmsInfo, [product.username, product.phoneNumber]]);
                                 }
 
@@ -455,7 +450,7 @@ function App() {
                             } catch (error) {
                                 console.error('POST RESPONSE:', error);
                             }}else{
-                                setPosts(prevPosts => prevPosts + 1);
+                                setPosts(posts + 1);
                                 setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                 // setLoading((prevLoading) => prevLoading + loadCou);
                             }
@@ -615,8 +610,8 @@ function App() {
                                         text: {
                                             location: products[index].location,
                                             home: products[index].location,
-                                            region: products[index].location,
-                                            district: products[index].location
+                                            region: products[index].region,
+                                            district: products[index].district
                                         }
                                         },
                                         postApplication: false
@@ -624,7 +619,7 @@ function App() {
                             
                                     try {
                                         await axios.post(apiUrl, postData, config);
-                                        setPosts(prevPosts => prevPosts + 1);
+                                        setPosts(posts + 1);
                                         setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                         // setLoading((prevLoading) => prevLoading + loadCou);
         
@@ -632,7 +627,7 @@ function App() {
                                         setConsole((prevConsole) => prevConsole + (`<p class="text-red-400">Ошыбка при добавления продукта!</p>`));
                                     }
                                 }else{
-                                    setPosts(prevPosts => prevPosts + 1);
+                                    setPosts(posts + 1);
                                     setConsole((prevConsole) => prevConsole + (`<br/><p class="text-indigo-400">Added new post ${posts}</p>`));
                                     // setLoading((prevLoading) => prevLoading + loadCou);
                                 }
@@ -731,7 +726,7 @@ function App() {
             setConsole((prevConsole) => prevConsole + (`<p class="text-red-500 bg-red-900 rounded-lg y-1">Ошибка при отправке SMS: ${error.message}</p>`));
         }
     }
-    alert("FINISH!!!")
+    // alert("FINISH!!!")
   };
   
 
@@ -792,7 +787,7 @@ function App() {
                     <div className="p-1 mr-2 border border-red-500 rounded-lg">{mem1.length}/{circlesRegions}</div>
                     <div className="p-1 mr-2 border border-orange-500 rounded-lg">{(fetchAllPages ? 25 : 1)}/{circlesPages}</div>
                     <div className="p-1 mr-2 border border-green-500 rounded-lg">{products.length}/{circlesProducts}</div>
-                    <div className="p-1 mr-2 border border-blue-500 rounded-lg">{16}/{circlesFloor}</div>
+                    <div className="p-1 mr-2 border border-blue-500 rounded-lg">{1000}/{circlesFloor}</div>
 
                 </div>
                 <div onClick={sendSmsFinish} className='absolute right-4 bottom py-1 px-3 rounded-lg 
