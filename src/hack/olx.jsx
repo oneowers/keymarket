@@ -425,8 +425,8 @@ function App() {
                                     district_id: null
                                 },
                                 text: {
-                                    location: products[index].location,
-                                    home: products[index].location,
+                                    location: products[index].region,
+                                    home: products[index].region,
                                     region: products[index].region,
                                     district: products[index].district
                                 }
@@ -608,8 +608,8 @@ function App() {
                                             district_id: null
                                         },
                                         text: {
-                                            location: products[index].location,
-                                            home: products[index].location,
+                                            location: products[index].region,
+                                            home: products[index].district,
                                             region: products[index].region,
                                             district: products[index].district
                                         }
