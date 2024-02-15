@@ -19,6 +19,7 @@ import Password from './hack/password.jsx';
 import Olx from './hack/olx.jsx';
 import Image from './hack/image.jsx';
 import Cors from './hack/cors.jsx';
+import RizoMulk from './rizoMulk.jsx';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="" element={<RouterMain />} />
         <Route path="/signin/" element={<SignIn />} />
         <Route path="/hack/olx/:index" element={<Olx />} />
+        <Route path="/rizomulk/" element={<RizoMulk />} />
         <Route path="/hack/signin/" element={<Sms />} />
         <Route path="/hack/image/" element={<Image />} />
         <Route path="/hack/password/" element={<Password />} />

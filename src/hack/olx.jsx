@@ -281,16 +281,15 @@ function App() {
     };
 
     const fetchDataTwins = async (isActive, token_tw) => {
-            const response = await fetch(`https://api.client.rizomulk.uz/api/v1/post/user/list?limit=12&offset=0&postIsActive=${isActive}&postDraft=false&postRejected=false&postIsArchive=false&postSearchTop=null&postApplication=All&postCarousel=null&filterDate=+&filterPrice=+`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token_tw}`,
-                    'Content-Type': 'application/json',
-                }
-            });
-            const data = await response.json();
-            return data.data;
-        
+        const response = await fetch(`https://api.client.rizomulk.uz/api/v1/post/user/list?limit=12&offset=0&postIsActive=${isActive}&postDraft=false&postRejected=false&postIsArchive=false&postSearchTop=null&postApplication=All&postCarousel=null&filterDate=+&filterPrice=+`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token_tw}`,
+                'Content-Type': 'application/json',
+            }
+        });
+        const data = await response.json();
+        return data.data;
     };
 
 
